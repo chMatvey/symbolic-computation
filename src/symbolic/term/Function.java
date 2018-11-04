@@ -1,7 +1,7 @@
 package symbolic.term;
 
-import symbolic.term.Terms;
+import java.util.List;
 
-public abstract class Function<T> extends Terms<T> {
-    public abstract T getFunctionValue(T[] variables);
+public abstract class Function<T extends java.lang.Number> extends Terms<T> {
+    public abstract T getFunctionValue(List<T> variables);
 }

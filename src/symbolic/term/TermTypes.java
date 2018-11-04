@@ -1,3 +1,3 @@
 package symbolic.term;
 
-public enum TermTypes {Variable, Number}
+public enum TermTypes {Variable, Number, Exponent}

@@ -1,8 +1,8 @@
 package symbolic.term;
 
-import symbolic.term.Terms;
 
-public abstract class Element<T> extends Terms<T> {
+public abstract class Value<T extends java.lang.Number> extends Terms<T> {
     public abstract T getValue();
     public abstract void setValue(T value);
 }
+

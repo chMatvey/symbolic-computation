@@ -1,25 +1,33 @@
 package symbolic;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public abstract class Symbol<T> {
-    Symbol(){}
+public abstract class Symbol<T extends java.lang.Number> {
 
-    Symbol(int countBranches, Class<T> tClass){
-        this.countBranches = countBranches;
-        branches = new ArrayList<Symbol<T>>(countBranches);
-        @SuppressWarnings("uncheked")
-        final T[] a = (T[]) Array.newInstance(tClass, countBranches);
+    private int countBranches;
+    private List<Symbol<T>> branches;
+    private List<T> coefficients;
 
-        isNextChildVariable = new boolean[countBranches];
+    Symbol(){
+        countBranches = 0;
+        branches = null;
+        coefficients = null;
     }
 
-    public int countBranches;
-    public List<Symbol<T>> branches;
-    public T[] coefficients;
-    public boolean[] isNextChildVariable;
+    Symbol(int countBranches){
+        this.countBranches = countBranches;
+        branches = new ArrayList<Symbol<T>>(countBranches);
+        coefficients = new ArrayList<T>(countBranches);
+    }
+
+    Symbol(int countBranches, List<Symbol<T>> branches, List<T> coefficients){
+        this.countBranches = countBranches;
+        this.branches = branches;
+        this.coefficients = coefficients;
+    }
+
+    protected void setCoefficients(int index, T coefficient) {
+        this.coefficients.add(index, coefficient);
+    }
 }

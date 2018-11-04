@@ -1,12 +1,13 @@
 package symbolic.term;
 
-import symbolic.term.Element;
-import symbolic.term.TermTypes;
-
-public class Variable<T> extends Element<T> {
+public class Variable<T extends java.lang.Number> extends Value<T> {
 
     private String name;
     private T value;
+
+    public Variable(String name){
+        this.name = name;
+    }
 
     @Override
     public TermTypes getType() {

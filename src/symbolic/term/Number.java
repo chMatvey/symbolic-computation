@@ -1,8 +1,12 @@
 package symbolic.term;
 
-public class Number<T> extends Element<T> {
+public class Number<T extends java.lang.Number> extends Value<T> {
 
     private T data;
+
+    public Number(T data){
+        this.data = data;
+    }
 
     @Override
     public TermTypes getType() {
@@ -11,7 +15,7 @@ public class Number<T> extends Element<T> {
 
     @Override
     public String getExpressionName() {
-        return null;
+        return data.toString();
     }
 
     @Override

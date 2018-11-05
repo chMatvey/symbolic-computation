@@ -5,9 +5,9 @@ import java.util.List;
 
 public abstract class Symbol<T extends java.lang.Number> {
 
-    private int countBranches;
-    private List<Symbol<T>> branches;
-    private List<T> coefficients;
+    protected int countBranches;
+    protected List<Symbol<T>> branches;
+    protected List<T> coefficients;
 
     Symbol(){
         countBranches = 0;

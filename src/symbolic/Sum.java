@@ -1,60 +1,51 @@
 package symbolic;
 
-import symbolic.term.*;
+import symbolic.term.Function;
 import symbolic.term.Number;
+import symbolic.term.Terms;
 
-import java.util.List;
+public class Sum<T extends java.lang.Number> extends Symbol<T>{
 
-public class Sum<T extends java.lang.Number> extends Symbol<T> {
     private Terms<T> data;
 
     public Sum(){
         super();
     }
 
-    public Sum(T number){
-        super();
-        data = new Number<>(number);
-    }
-
-    private Sum(TermTypes termTypes){
-        super();
-        switch (termTypes){
-            case Exponent:{
-                data = new Exponent<>();
-                break;
-            }
-            default:{
-                break;
-            }
-        }
-    }
-
     public Sum(int countBranches){
         super(countBranches);
     }
 
-    public Sum(String variableName){
-        super();
-        data = new Variable<>(variableName);
-    }
-
-    public Sum(int countBranches, List<Symbol<T>> branches, List<T> coefficients){
-        super(countBranches, branches, coefficients);
-    }
-
-    private Sum(TermTypes termTypes, int countBranches, List<Symbol<T>> branches, List<T> coefficients){
-        super(countBranches, branches, coefficients);
-        switch (termTypes){
-            case Exponent:{
-                data = new Exponent<>();
-                break;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == Sum.class){
+            Sum sum = (Sum)obj;
+            if(sum.data == this.data && this.data.getClass() != Function.class){
+                return true;
+            } else if(sum.branches.size() == this.branches.size() && sum.data == this.data) {
+                int size = sum.branches.size();
+                boolean existEquals = false;
+                for(int i = 0; i < size; i++){
+                    for (int j = 0; j < size; j++){
+                        if (this.branches.get(i).equals(sum.branches.get(j))){
+                            Symbol<T> symbol = (Symbol<T>) sum.branches.get(i);
+                            sum.branches.set(i, sum.branches.get(j));
+                            sum.branches.set(j, symbol);
+                            existEquals = true;
+                            break;
+                        }
+                    }
+                    if(!existEquals){
+                        return false;
+                    }
+                    existEquals = false;
+                }
+                return true;
+            } else {
+                return false;
             }
-            default:{
-                break;
-            }
+        } else {
+            return false;
         }
     }
-
-    
 }

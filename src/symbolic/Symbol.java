@@ -1,5 +1,7 @@
 package symbolic;
 
+import symbolic.term.Number;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ public abstract class Symbol<T extends java.lang.Number> {
 
     protected int countBranches;
     protected List<Symbol<T>> branches;
-    protected List<T> coefficients;
+    protected List<Number> coefficients;
 
     Symbol(){
         countBranches = 0;
@@ -18,16 +20,28 @@ public abstract class Symbol<T extends java.lang.Number> {
     Symbol(int countBranches){
         this.countBranches = countBranches;
         branches = new ArrayList<Symbol<T>>(countBranches);
-        coefficients = new ArrayList<T>(countBranches);
+        coefficients = new ArrayList<Number>(countBranches);
     }
 
-    Symbol(int countBranches, List<Symbol<T>> branches, List<T> coefficients){
+    Symbol(int countBranches, List<Symbol<T>> branches, List<Number> coefficients){
         this.countBranches = countBranches;
         this.branches = branches;
         this.coefficients = coefficients;
     }
 
-    protected void setCoefficients(int index, T coefficient) {
-        this.coefficients.add(index, coefficient);
+    public void checkEquals(){
+        if(branches.size() < 2){
+            return;
+        }
+        for (int i = 0; i < branches.size(); i++){
+            for (int j = 1; j < branches.size(); i++){
+                if(branches.get(i).equals(branches.get(j))){
+                    Number newCoefficient = Number.add(coefficients.get(i), coefficients.get(j));
+                    coefficients.set(i, newCoefficient);
+                    branches.remove(j);
+                    coefficients.remove(j);
+                }
+            }
+        }
     }
 }

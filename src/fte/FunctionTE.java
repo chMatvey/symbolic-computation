@@ -1,5 +1,6 @@
 package fte;
 
+import symbolic.Mul;
 import symbolic.Sum;
 import symbolic.Symbol;
 import symbolic.term.TermTypes;
@@ -21,7 +22,7 @@ public class FunctionTE {
     public Symbol<java.lang.Number> getSymbolic() {
         Symbol result;
         NumberType numberType;
-        if (expression.contains(".")){
+        if (expression.contains(".")) {
             result = new Sum<Double>();
             numberType = NumberType.Double;
         } else {
@@ -39,33 +40,61 @@ public class FunctionTE {
 
         String str = "";
         TermTypes termTypes = null;
-        
+        Symbol mul;
+        Number coefficient;
+        Number number;
+        String variable;
+        if (numberType == NumberType.Integer) {
+            mul = new Mul<Integer>();
+        } else {
+            mul = new Mul<Integer>();
+        }
+
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] > 47 && chars[i] < 58) {
-                if(!checkTermsType(termTypes, TermTypes.Number)){
+                if (!checkTermsType(termTypes, TermTypes.Number)) {
                     return null;
                 }
                 termTypes = TermTypes.Number;
                 str += chars[i];
             } else if ((chars[i] > 64 && chars[i] < 91) || (chars[i] > 96 && chars[i] < 123)) {
-                if(!checkTermsType(termTypes, TermTypes.Number)){
+                if (!checkTermsType(termTypes, TermTypes.Number)) {
                     return null;
                 }
                 termTypes = TermTypes.Variable;
                 str += chars[i];
-            } else if (chars[i] == '.'){
-                if (termTypes != TermTypes.Number){
+            } else if (chars[i] == '.') {
+                if (termTypes != TermTypes.Number) {
                     return null;
                 }
                 str += chars[i];
-            } else if (chars[i] == '+'){
+            } else if (chars[i] == '^') {
+                if(termTypes == TermTypes.Number){
+                    if (numberType == NumberType.Integer){
+                        number = Integer.parseInt(str);
+                    } else {
+                        number = Double.parseDouble(str);
+                    }
+                    variable = null;
+                } else {
 
+                }
+            } else if (chars[i] == '*') {
+                if (termTypes == TermTypes.Number) {
+                    mul.addBranch();
+                }
+            } else if (chars[i] == '+') {
+                if (termTypes == TermTypes.Number) {
+                    if (numberType == NumberType.Integer) {
+
+                    }
+                }
             }
         }
         return null;
     }
 
-    private boolean checkTermsType(TermTypes a, TermTypes b){
+    private boolean checkTermsType(TermTypes a, TermTypes b) {
         return a == b || a == null || b == null;
     }
 }

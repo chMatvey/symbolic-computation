@@ -44,4 +44,10 @@ public abstract class Symbol<T extends java.lang.Number> {
             }
         }
     }
+
+    public void addBranch(Symbol<T> branch, Number coefficient){
+        countBranches++;
+        branches.add(branch);
+        coefficients.add(coefficient);
+    }
 }

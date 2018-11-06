@@ -41,9 +41,9 @@ public class FunctionTE {
         String str = "";
         TermTypes termTypes = null;
         Symbol mul;
-        Number coefficient;
-        Number number;
-        String variable;
+        Number coefficient = null;
+        Number number = null;
+        String variable = null;
         if (numberType == NumberType.Integer) {
             mul = new Mul<Integer>();
         } else {
@@ -80,8 +80,8 @@ public class FunctionTE {
 
                 }
             } else if (chars[i] == '*') {
-                if (termTypes == TermTypes.Number) {
-                    mul.addBranch();
+                if (termTypes == TermTypes.Number && number != null) {
+                    Symbol num = new Sum(number);
                 }
             } else if (chars[i] == '+') {
                 if (termTypes == TermTypes.Number) {

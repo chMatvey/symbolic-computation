@@ -16,6 +16,11 @@ public class Sum<T extends java.lang.Number> extends Symbol<T>{
         super(countBranches);
     }
 
+    public Sum(java.lang.Number number){
+        super();
+        data = new Number(number);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj.getClass() == Sum.class){

@@ -2,9 +2,9 @@ package symbolic.term;
 
 import java.util.List;
 
-public class Exponent<T extends java.lang.Number> extends Function<T> {
+public class Exponent<T extends Number> extends Function<T> {
 
-    private static final String name = "exp";
+    private static final TermTypes types = TermTypes.Exponent;
 
     @Override
     public TermTypes getType() {
@@ -13,11 +13,11 @@ public class Exponent<T extends java.lang.Number> extends Function<T> {
 
     @Override
     public String getExpressionName() {
-        return name;
+        return types.toString();
     }
 
     @Override
-    public T getFunctionValue(List<T> variables) {
-        return null;
+    public Number getFunctionValue(T argument) {
+        return Math.exp(argument.doubleValue());
     }
 }

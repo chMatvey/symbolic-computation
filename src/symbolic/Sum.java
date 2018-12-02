@@ -1,56 +1,50 @@
 package symbolic;
 
-import symbolic.term.Function;
-import symbolic.term.Number;
-import symbolic.term.Terms;
+import symbolic.term.TermNumber;
+import symbolic.term.Term;
 
-public class Sum<T extends java.lang.Number> extends Symbol<T>{
+public class Sum<T extends Number> extends AbstractSymbol<T>{
 
-    private Terms<T> data;
+    private Term<T> data;
+
+    private AbstractSymbol degree;
 
     public Sum(){
         super();
     }
 
-    public Sum(int countBranches){
-        super(countBranches);
+    public Sum(T number){
+        super();
+        degree = createOne();
+        data = new TermNumber<T>(number);
     }
 
-    public Sum(java.lang.Number number){
+    public Sum(Term<T> data){
         super();
-        data = new Number(number);
+        degree = createOne();
+        this.data = data;
+    }
+
+    public Sum(Term<T> data, AbstractSymbol coefficient, AbstractSymbol degree){
+        super(coefficient);
+        this.data = data;
+        this.degree = degree;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj.getClass() == Sum.class){
-            Sum sum = (Sum)obj;
-            if(sum.data == this.data && this.data.getClass() != Function.class){
-                return true;
-            } else if(sum.branches.size() == this.branches.size() && sum.data == this.data) {
-                int size = sum.branches.size();
-                boolean existEquals = false;
-                for(int i = 0; i < size; i++){
-                    for (int j = 0; j < size; j++){
-                        if (this.branches.get(i).equals(sum.branches.get(j))){
-                            Symbol<T> symbol = (Symbol<T>) sum.branches.get(i);
-                            sum.branches.set(i, sum.branches.get(j));
-                            sum.branches.set(j, symbol);
-                            existEquals = true;
-                            break;
-                        }
-                    }
-                    if(!existEquals){
-                        return false;
-                    }
-                    existEquals = false;
-                }
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass() || super.equals(obj)) return false;
+        Sum sum = (Sum) obj;
+        return data.equals(sum.data);
+    }
+
+    @Override
+    public int compareTo(AbstractSymbol o) {
+        int result = super.compareTo(o);
+        if (result == 0 && countBranches == 0){
+            Sum sum = (Sum) o;
         }
+        return 0;
     }
 }

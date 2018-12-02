@@ -5,8 +5,6 @@ import symbolic.Sum;
 import symbolic.Symbol;
 import symbolic.term.TermTypes;
 
-import java.util.List;
-
 public class FunctionTE {
 
     private String expression;

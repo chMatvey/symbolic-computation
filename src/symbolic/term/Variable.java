@@ -1,6 +1,6 @@
 package symbolic.term;
 
-public class Variable<T extends java.lang.Number> extends Value<T> {
+public class Variable<T extends Number> extends Magnitude<T> {
 
     private String name;
     private T value;
@@ -26,6 +26,14 @@ public class Variable<T extends java.lang.Number> extends Value<T> {
 
     @Override
     public void setValue(T value) {
-        value = value;
+        this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Variable variable = (Variable) obj;
+        return name.equals(variable.name);
     }
 }

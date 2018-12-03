@@ -46,6 +46,18 @@ public class TermNumber<T extends Number> extends Magnitude<T> {
         }
     }
 
+    public static TermNumber mul(TermNumber a, TermNumber b) {
+        if (a.getValue() instanceof Double || b.getValue() instanceof Double) {
+            return new TermNumber<>(a.getValue().doubleValue() * b.getValue().doubleValue());
+        } else if (a.getValue() instanceof Float || b.getValue() instanceof Float) {
+            return new TermNumber<>(a.getValue().floatValue() * b.getValue().floatValue());
+        } else if (a.getValue() instanceof Long || b.getValue() instanceof Long) {
+            return new TermNumber<>(a.getValue().longValue() * b.getValue().floatValue());
+        } else {
+            return new TermNumber<>(a.getValue().intValue() * b.getValue().intValue());
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

@@ -3,8 +3,11 @@ package ru.chudakov.symbolic;
 import ru.chudakov.symbolic.term.AbstractTerm;
 import ru.chudakov.symbolic.term.Term;
 import ru.chudakov.symbolic.term.TermNumber;
+import ru.chudakov.symbolic.term.TermTypes;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 public class Sum<T extends Number> extends AbstractSymbol<T> {
@@ -12,7 +15,6 @@ public class Sum<T extends Number> extends AbstractSymbol<T> {
     private Term<T> data;
 
     public Sum() {
-        super();
     }
 
     public Sum(T number) {
@@ -29,6 +31,14 @@ public class Sum<T extends Number> extends AbstractSymbol<T> {
 
     public Sum(Term<T> data, TermNumber<T> coefficient) {
         super(coefficient);
+        this.data = data;
+    }
+
+    public Term<T> getData() {
+        return data;
+    }
+
+    public void setData(Term<T> data) {
         this.data = data;
     }
 
@@ -68,10 +78,8 @@ public class Sum<T extends Number> extends AbstractSymbol<T> {
 
     @Override
     public String toString() {
-        if (data == null){
-            return this.branches.toString();
-        } else if (coefficient != null) {
-            return coefficient.toString() + "*" + data.toString();
+        if (data == null) {
+            return super.toString();
         } else {
             return data.toString();
         }

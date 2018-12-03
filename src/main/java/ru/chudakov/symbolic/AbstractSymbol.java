@@ -1,6 +1,8 @@
 package ru.chudakov.symbolic;
 
+import ru.chudakov.symbolic.term.Term;
 import ru.chudakov.symbolic.term.TermNumber;
+import ru.chudakov.symbolic.term.TermTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +35,7 @@ public abstract class AbstractSymbol<T extends Number> implements Symbol<T> {
 
     AbstractSymbol(Collection<AbstractSymbol<T>> branches, TermNumber<T> coefficients) {
         this.countBranches = branches.size();
-        this.branches = new TreeSet<>(branches);
+        this.branches = new TreeSet<>(mergeDuplicate(branches));
         this.coefficient = coefficients;
     }
 
@@ -43,10 +45,29 @@ public abstract class AbstractSymbol<T extends Number> implements Symbol<T> {
         for (AbstractSymbol<T> symbol : duplicateCollection) {
             if (uniqueCollection.contains(symbol)) {
                 duplicates.add(uniqueCollection.ceiling(symbol));
-                symbol.coefficient = TermNumber.add(symbol.coefficient,
-                        duplicates.get(duplicates.size() - 1).coefficient);
+                if (symbol.getClass() == Sum.class) {
+                    Sum sum = (Sum) symbol;
+                    if (sum.getData().getType() == TermTypes.Variable) {
+                        symbol.coefficient = TermNumber.add(symbol.coefficient,
+                                duplicates.get(duplicates.size() - 1).coefficient
+                        );
+                    } else if (sum.getData().getType() == TermTypes.Number) {
+                        Sum duplicate = (Sum) duplicates.get(duplicates.size() - 1);
+                        if (this.getClass() == Sum.class) {
+                            sum.setData((Term) TermNumber.add((TermNumber) sum.getData(),
+                                    (TermNumber) duplicate.getData()
+                            ));
+                        } else {
+                            sum.setData((Term) TermNumber.mul((TermNumber) sum.getData(),
+                                    (TermNumber) duplicate.getData()
+                            ));
+                        }
+                    } else {
+                        ///////////
+                    }
+                }
+                uniqueCollection.remove(symbol);
             }
-            uniqueCollection.remove(symbol);
             uniqueCollection.add(symbol);
         }
         return uniqueCollection;
@@ -69,6 +90,18 @@ public abstract class AbstractSymbol<T extends Number> implements Symbol<T> {
         } else {
             return -1;
         }
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        for (AbstractSymbol symbol : branches) {
+            if (symbol.coefficient != null){
+                result += symbol.coefficient;
+            }
+            result += symbol.toString() + "+";
+        }
+        return result.substring(0, result.length()-1);
     }
 
     @Override

@@ -1,9 +1,9 @@
-package fte;
+package ru.chudakov.fte;
 
-import symbolic.Mul;
-import symbolic.Sum;
-import symbolic.Symbol;
-import symbolic.term.TermTypes;
+import ru.chudakov.symbolic.Mul;
+import ru.chudakov.symbolic.Sum;
+import ru.chudakov.symbolic.Symbol;
+import ru.chudakov.symbolic.term.TermTypes;
 
 public class FunctionTE {
 

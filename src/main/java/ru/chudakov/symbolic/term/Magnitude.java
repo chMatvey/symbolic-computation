@@ -1,4 +1,4 @@
-package symbolic.term;
+package ru.chudakov.symbolic.term;
 
 public abstract class Magnitude<T extends Number> extends AbstractTerm<T> {
     public abstract T getValue();

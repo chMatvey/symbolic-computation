@@ -1,4 +1,4 @@
-package symbolic.term;
+package ru.chudakov.symbolic.term;
 
 import java.util.List;
 

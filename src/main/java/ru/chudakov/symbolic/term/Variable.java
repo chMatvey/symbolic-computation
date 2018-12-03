@@ -1,4 +1,4 @@
-package symbolic.term;
+package ru.chudakov.symbolic.term;
 
 public class Variable<T extends Number> extends Magnitude<T> {
 
@@ -35,5 +35,20 @@ public class Variable<T extends Number> extends Magnitude<T> {
         if (obj == null || getClass() != obj.getClass()) return false;
         Variable variable = (Variable) obj;
         return name.equals(variable.name);
+    }
+
+    @Override
+    public int compareTo(Term o) {
+        int result = super.compareTo(o);
+        if (result == 0){
+            Variable variable = (Variable) o;
+            result = name.compareTo(variable.name);
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

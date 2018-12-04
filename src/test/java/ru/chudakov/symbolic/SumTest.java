@@ -28,4 +28,10 @@ public class SumTest {
         AbstractSymbol<Integer> symbol = new Sum<>(collection);
         System.out.println(symbol);
     }
+
+    @Test
+    public void createDifficultSymbol(){
+        Collection<AbstractSymbol<Integer>> collection = new ArrayList<>();
+
+    }
 }

@@ -1,7 +1,10 @@
 package ru.chudakov.symbolic.term;
 
-public interface Term<T extends Number> extends Comparable<Term> {
-    public TermTypes getType();
+public interface Term extends Comparable<Term> {
 
-    public String getExpressionName();
+    public Number getValue();
+
+    public void setValue(Number value);
+
+    public int getPriority();
 }

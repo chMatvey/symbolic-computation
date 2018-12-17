@@ -1,11 +1,11 @@
 package ru.chudakov.symbolic;
 
-import java.util.Collection;
+import java.util.Map;
 
-public interface Symbol<T extends Number> extends Comparable<Symbol> {
-    public void add(Symbol symbol);
+public interface Symbol extends Comparable<Symbol> {
+    public Symbol add(Symbol symbol);
 
-    public void mul(Symbol symbol);
+    public int size();
 
-    public void power(Symbol symbol);
+    public Symbol getFirst();
 }

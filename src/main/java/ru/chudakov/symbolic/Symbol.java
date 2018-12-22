@@ -1,10 +1,11 @@
 package ru.chudakov.symbolic;
 
-import java.util.Iterator;
-import java.util.Map;
+import ru.chudakov.symbolic.visitor.OperationVisitor;
 
 public interface Symbol extends Comparable<Symbol> {
-    public int size();
+    public int getPriority();
 
-    public Symbol add(Symbol symbol);
+    public Symbol add(Symbol secondArgument);
+
+    public Symbol callVisitor(OperationVisitor visitor);
 }

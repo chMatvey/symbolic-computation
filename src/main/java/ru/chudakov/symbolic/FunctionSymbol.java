@@ -1,6 +1,5 @@
 package ru.chudakov.symbolic;
 
-import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.function.Function;
 
 public class FunctionSymbol extends AbstractSymbol {
@@ -18,7 +17,7 @@ public class FunctionSymbol extends AbstractSymbol {
     }
 
     @Override
-    public int compareTo(@NotNull Symbol o) {
+    public int compareTo(Symbol o) {
         return 0;
     }
 }

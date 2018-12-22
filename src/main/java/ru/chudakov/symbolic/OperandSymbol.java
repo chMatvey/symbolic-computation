@@ -1,14 +1,15 @@
 package ru.chudakov.symbolic;
 
-import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.term.Term;
 
-public class OperandSymbol extends AbstractSymbol {
-    private Term data;
+public abstract class OperandSymbol extends AbstractSymbol {
+    protected Double data;
 
-    public OperandSymbol(Term data) {
+    public OperandSymbol(Double data) {
         this.data = data;
     }
+
+    public abstract int getPriority();
 
     @Override
     public int size() {
@@ -16,14 +17,18 @@ public class OperandSymbol extends AbstractSymbol {
     }
 
     @Override
-    public Symbol getFirst() {
-        return this;
+    public Symbol add(Symbol symbol) {
+        return null;
     }
 
     @Override
-    public int compareTo(@NotNull Symbol o) {
-        OperandSymbol operand = (OperandSymbol) o.getFirst();
-        return data.compareTo(operand.data);
+    public int compareTo(Symbol o) {
+        if (this.getPriority() < o.getPriority())
+            return -1;
+        else if (this.getPriority() == this.getPriority())
+            return 0;
+        else
+            return 1;
     }
 
     @Override
@@ -35,7 +40,7 @@ public class OperandSymbol extends AbstractSymbol {
         Symbol symbol = (Symbol) obj;
         if (size() != symbol.size())
             return false;
-        OperandSymbol operand = (OperandSymbol) symbol.getFirst();
+        OperandSymbol operand = (OperandSymbol) symbol;
         return data.equals(operand.data);
     }
 }

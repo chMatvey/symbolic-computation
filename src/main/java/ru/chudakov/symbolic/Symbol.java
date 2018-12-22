@@ -7,5 +7,7 @@ public interface Symbol extends Comparable<Symbol> {
 
     public Symbol add(Symbol secondArgument);
 
+    public Symbol mul(Symbol secondArgument);
+
     public Symbol callVisitor(OperationVisitor visitor);
 }

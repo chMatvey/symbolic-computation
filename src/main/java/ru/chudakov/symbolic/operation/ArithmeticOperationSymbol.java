@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 public abstract class ArithmeticOperationSymbol extends OperationSymbol {
-    private TreeSet<Symbol> branches;
+    protected TreeSet<Symbol> branches;
 
     public ArithmeticOperationSymbol(Collection<Symbol> nodes) {
         branches = mergeDuplicates(nodes);
@@ -20,28 +20,9 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         branches.add(secondArgument);
     }
 
-    private TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes) {
-        TreeSet<Symbol> uniqueCollection = new TreeSet<>();
-        Symbol duplicateNode;
-        for (Symbol node : nodes) {
-            if (uniqueCollection.contains(node)) {
-                duplicateNode = uniqueCollection.ceiling(node);
-                node = node.add(duplicateNode);
-                uniqueCollection.remove(node);
-            }
-            uniqueCollection.add(node);
-        }
-        return uniqueCollection;
-    }
+    protected abstract TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes);
 
-    public void addBranch(Symbol symbol) {
-        if (branches.contains(symbol)) {
-            Symbol duplicate = branches.ceiling(symbol);
-            symbol = symbol.add(duplicate);
-            branches.remove(duplicate);
-        }
-        branches.add(symbol);
-    }
+    public abstract void addBranch(Symbol symbol);
 
     public Symbol[] toArray() {
         return branches.toArray(new Symbol[0]);

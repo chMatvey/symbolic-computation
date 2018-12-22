@@ -13,23 +13,27 @@ import ru.chudakov.symbolic.visitor.OperationVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiplicationOperationVisitorForNumber implements OperationVisitor {
-    private NumberSymbol firstArgument;
+public class MultiplicationOperationVisitorForFraction implements OperationVisitor {
+    private FractionSymbol firstArgument;
 
-    public MultiplicationOperationVisitorForNumber(NumberSymbol firstArgument) {
+    public MultiplicationOperationVisitorForFraction(FractionSymbol firstArgument){
         this.firstArgument = firstArgument;
     }
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return new NumberSymbol(firstArgument.getData() * secondArgument.getData());
+        return new FractionSymbol(
+                firstArgument.getNumerator() * secondArgument.getData(),
+                firstArgument.getDenominator()
+        );
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
         return new FractionSymbol(
-                firstArgument.getData() * secondArgument.getNumerator(),
-                secondArgument.getDenominator());
+                firstArgument.getNumerator() * secondArgument.getNumerator(),
+                firstArgument.getDenominator() * secondArgument.getDenominator()
+        );
     }
 
     @Override

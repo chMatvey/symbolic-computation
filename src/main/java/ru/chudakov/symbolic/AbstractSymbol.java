@@ -15,6 +15,11 @@ public abstract class AbstractSymbol implements Symbol {
     }
 
     @Override
+    public Symbol mul(Symbol secondArgument) {
+        return null;
+    }
+
+    @Override
     public Symbol callVisitor(OperationVisitor visitor) {
         return null;
     }

@@ -2,22 +2,10 @@ package ru.chudakov.symbolic.term;
 
 import org.jetbrains.annotations.NotNull;
 
-public class NumberTerm implements Term {
+public class NumberTerm extends AbstractTerm {
 
-    private Number data;
-
-    public NumberTerm(Number data) {
-        this.data = data;
-    }
-
-    @Override
-    public Number getValue() {
-        return data;
-    }
-
-    @Override
-    public void setValue(Number value) {
-        data = value;
+    public NumberTerm(Double data) {
+        super(data);
     }
 
     @Override

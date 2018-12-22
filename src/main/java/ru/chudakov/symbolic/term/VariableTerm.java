@@ -2,23 +2,17 @@ package ru.chudakov.symbolic.term;
 
 import org.jetbrains.annotations.NotNull;
 
-public class VariableTerm implements Term {
+public class VariableTerm extends AbstractTerm {
 
     private String name;
-    private Number value;
 
     public VariableTerm(String name) {
         this.name = name;
     }
 
-    @Override
-    public Number getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Number value) {
-        this.value = value;
+    public VariableTerm(String name, Double value) {
+        super(value);
+        this.name = name;
     }
 
     @Override
@@ -30,8 +24,8 @@ public class VariableTerm implements Term {
     public int compareTo(@NotNull Term o) {
         if (this.getPriority() < o.getPriority())
             return -1;
-        else if (this.getPriority() == o.getPriority())
-            return name.compareTo(((VariableTerm) o).name);
+        else if (this.getPriority() == this.getPriority())
+            return 0;
         else
             return 1;
     }

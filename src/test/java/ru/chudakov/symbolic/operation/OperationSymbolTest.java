@@ -19,10 +19,10 @@ public class OperationSymbolTest {
         list.add(new NumberSymbol(1d));
         list.add(new FractionSymbol(2d, 3d));
         list.add(new FractionSymbol(4d, 6d));
-        list.add(new VariableSymbol("a", 4d));
+        list.add(new VariableSymbol("a"));
         list.add(new MulSymbol(list));
-        list.add(new PowerSymbol(new VariableSymbol("b", 1d), new NumberSymbol(3d)));
-        list.add(new ExponentSymbol(new VariableSymbol("c", 1d)));
+        list.add(new PowerSymbol(new VariableSymbol("b"), new NumberSymbol(3d)));
+        list.add(new ExponentSymbol(new VariableSymbol("c")));
         Symbol sum = new SumSymbol(list);
         return;
     }

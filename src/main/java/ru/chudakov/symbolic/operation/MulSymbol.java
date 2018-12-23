@@ -1,13 +1,11 @@
 package ru.chudakov.symbolic.operation;
 
-import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
-import ru.chudakov.symbolic.visitor.Addition.AdditionOperationVisitorForMul;
-import ru.chudakov.symbolic.visitor.Addition.AdditionOperationVisitorForSum;
+import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
+import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForMul;
 
 import java.util.Collection;
-import java.util.TreeSet;
 
 public class MulSymbol extends ArithmeticOperationSymbol {
 
@@ -19,29 +17,23 @@ public class MulSymbol extends ArithmeticOperationSymbol {
         super(firstArgument, secondArgument);
     }
 
-    @Override
-    protected TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes) {
-        TreeSet<Symbol> uniqueCollection = new TreeSet<>();
-        Symbol duplicateNode;
-        for (Symbol node : nodes) {
-            if (uniqueCollection.contains(node)) {
-                duplicateNode = uniqueCollection.ceiling(node);
-                node = node.mul(duplicateNode);
-                uniqueCollection.remove(node);
-            }
-            uniqueCollection.add(node);
+    public NumberSymbol getCoefficient() {
+        NumberSymbol coefficient = new NumberSymbol(1d);
+        if (branches.contains(coefficient)) {
+            return (NumberSymbol) branches.ceiling(coefficient);
+        } else {
+            return coefficient;
         }
-        return uniqueCollection;
+    }
+
+    public void setCoefficient(NumberSymbol coefficient) {
+        branches.remove(coefficient);
+        branches.add(coefficient);
     }
 
     @Override
-    public void addBranch(Symbol symbol) {
-        if (branches.contains(symbol)) {
-            Symbol duplicate = branches.ceiling(symbol);
-            symbol = symbol.mul(duplicate);
-            branches.remove(duplicate);
-        }
-        branches.add(symbol);
+    protected Symbol calculate(Symbol firstArgument, Symbol secondArgument) {
+        return firstArgument.mul(secondArgument);
     }
 
     @Override
@@ -56,6 +48,6 @@ public class MulSymbol extends ArithmeticOperationSymbol {
 
     @Override
     public Symbol callVisitor(OperationVisitor visitor) {
-        return super.callVisitor(visitor);
+        return visitor.calculateMul(this);
     }
 }

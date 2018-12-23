@@ -1,4 +1,4 @@
-package ru.chudakov.symbolic.visitor.Addition;
+package ru.chudakov.symbolic.visitor.addition;
 
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.operand.FractionSymbol;

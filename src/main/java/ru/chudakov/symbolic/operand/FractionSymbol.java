@@ -1,7 +1,7 @@
 package ru.chudakov.symbolic.operand;
 
 import ru.chudakov.symbolic.Symbol;
-import ru.chudakov.symbolic.visitor.Addition.AdditionOperationVisitorForFraction;
+import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForFraction;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForFraction;
 

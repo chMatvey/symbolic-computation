@@ -14,15 +14,37 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         branches = mergeDuplicates(nodes);
     }
 
-    public ArithmeticOperationSymbol(Symbol firstArgument, Symbol secondArgument) {
+    public ArithmeticOperationSymbol(@NotNull Symbol firstArgument, Symbol secondArgument) {
         branches = new TreeSet<>();
-        branches.add(firstArgument);
-        branches.add(secondArgument);
+        if (firstArgument.compareTo(secondArgument) == 0) {
+            branches.add(firstArgument.add(secondArgument));
+        }
     }
 
-    protected abstract TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes);
+    protected abstract Symbol calculate(Symbol firstArgument, Symbol secondArgument);
 
-    public abstract void addBranch(Symbol symbol);
+    protected TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes) {
+        TreeSet<Symbol> uniqueCollection = new TreeSet<>();
+        Symbol duplicateNode;
+        for (Symbol node : nodes) {
+            if (uniqueCollection.contains(node)) {
+                duplicateNode = uniqueCollection.ceiling(node);
+                node = calculate(node, duplicateNode);
+                uniqueCollection.remove(node);
+            }
+            uniqueCollection.add(node);
+        }
+        return uniqueCollection;
+    }
+
+    public void addBranch(Symbol symbol) {
+        if (branches.contains(symbol)) {
+            Symbol duplicate = branches.ceiling(symbol);
+            symbol = calculate(symbol, duplicate);
+            branches.remove(duplicate);
+        }
+        branches.add(symbol);
+    }
 
     public Symbol[] toArray() {
         return branches.toArray(new Symbol[0]);
@@ -46,11 +68,43 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
                     return result;
                 }
             }
-            if (firstIterator.hasNext())
-                result = 1;
-            else if (secondIterator.hasNext())
-                result = -1;
+            while (firstIterator.hasNext()) {
+                if (firstIterator.next().getPriority() != 0)
+                    return -1;
+            }
+            while (secondIterator.hasNext()) {
+                if (secondIterator.next().getPriority() != 0) {
+                    return 1;
+                }
+            }
         }
-        return result;
+        return 0;
     }
+
+//    @Override
+//    public boolean equals(Object obj) {
+//        boolean result = super.equals(obj);
+//        if (result) {
+//            ArithmeticOperationSymbol symbol = (ArithmeticOperationSymbol) obj;
+//            Iterator<Symbol> firstIterator = this.branches.iterator();
+//            Iterator<Symbol> secondIterator = symbol.branches.iterator();
+//            while (firstIterator.hasNext() && secondIterator.hasNext()) {
+//                result = firstIterator.next().equals(secondIterator.next());
+//                if (!result) {
+//                    return false;
+//                }
+//            }
+//            while (firstIterator.hasNext()) {
+//                if (firstIterator.next().getPriority() != 0) {
+//                    return false;
+//                }
+//            }
+//            while (secondIterator.hasNext()) {
+//                if (secondIterator.next().getPriority() != 0) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return result;
+//    }
 }

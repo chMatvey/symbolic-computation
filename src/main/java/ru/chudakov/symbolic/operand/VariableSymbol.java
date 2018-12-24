@@ -1,6 +1,9 @@
 package ru.chudakov.symbolic.operand;
 
 import ru.chudakov.symbolic.Symbol;
+import ru.chudakov.symbolic.visitor.OperationVisitor;
+import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForVariable;
+import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForVariable;
 
 public class VariableSymbol extends OperandSymbol {
     private String name;
@@ -24,13 +27,28 @@ public class VariableSymbol extends OperandSymbol {
         return result;
     }
 
+//    @Override
+//    public boolean equals(Object obj) {
+//        boolean result = super.equals(obj);
+//        if (result) {
+//            VariableSymbol symbol = (VariableSymbol) obj;
+//            result = this.name.equals(symbol.name);
+//        }
+//        return result;
+//    }
+
     @Override
-    public boolean equals(Object obj) {
-        boolean result = super.equals(obj);
-        if (result) {
-            VariableSymbol symbol = (VariableSymbol) obj;
-            result = this.name.equals(symbol.name);
-        }
-        return result;
+    public Symbol add(Symbol secondArgument) {
+        return secondArgument.callVisitor(new AdditionOperationVisitorForVariable(this));
+    }
+
+    @Override
+    public Symbol mul(Symbol secondArgument) {
+        return secondArgument.callVisitor(new MultiplicationOperationVisitorForVariable(this));
+    }
+
+    @Override
+    public Symbol callVisitor(OperationVisitor visitor) {
+        return visitor.calculateVariable(this);
     }
 }

@@ -10,10 +10,10 @@ import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 
-public class AdditionOperationVisitorForFunction implements OperationVisitor {
-    private FunctionSymbol firstArgument;
+public class AdditionOperationVisitorForVariable implements OperationVisitor {
+    private VariableSymbol firstArgument;
 
-    public AdditionOperationVisitorForFunction(FunctionSymbol firstArgument) {
+    public AdditionOperationVisitorForVariable(VariableSymbol firstArgument) {
         this.firstArgument = firstArgument;
     }
 
@@ -29,7 +29,11 @@ public class AdditionOperationVisitorForFunction implements OperationVisitor {
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        if (firstArgument.compareTo(secondArgument) == 0) {
+            return new MulSymbol(firstArgument, new NumberSymbol(2d));
+        } else {
+            return new SumSymbol(firstArgument, secondArgument);
+        }
     }
 
     @Override
@@ -40,7 +44,12 @@ public class AdditionOperationVisitorForFunction implements OperationVisitor {
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        if (firstArgument.compareTo(secondArgument) == 0) {
+            secondArgument.incrementCoefficient();
+            return secondArgument;
+        } else {
+            return new SumSymbol(firstArgument, secondArgument);
+        }
     }
 
     @Override

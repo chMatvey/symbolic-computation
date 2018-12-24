@@ -1,4 +1,4 @@
-package ru.chudakov.symbolic.visitor.addition;
+package ru.chudakov.symbolic.visitor.multiplication;
 
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.operand.FractionSymbol;
@@ -10,46 +10,45 @@ import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 
-public class AdditionOperationVisitorForFunction implements OperationVisitor {
-    private FunctionSymbol firstArgument;
+public class MultiplicationOperationVisitorForPower implements OperationVisitor {
+    private PowerSymbol firstArgument;
 
-    public AdditionOperationVisitorForFunction(FunctionSymbol firstArgument) {
+    public MultiplicationOperationVisitorForPower(PowerSymbol firstArgument) {
         this.firstArgument = firstArgument;
     }
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        return null;
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        return null;
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        return null;
     }
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        secondArgument.addBranch(firstArgument);
-        return secondArgument;
+        return null;
     }
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        return null;
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        return null;
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        return null;
     }
 }

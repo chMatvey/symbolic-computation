@@ -17,7 +17,10 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
     public ArithmeticOperationSymbol(@NotNull Symbol firstArgument, Symbol secondArgument) {
         branches = new TreeSet<>();
         if (firstArgument.compareTo(secondArgument) == 0) {
-            branches.add(firstArgument.add(secondArgument));
+            branches.add(calculate(firstArgument, secondArgument));
+        } else {
+            branches.add(firstArgument);
+            branches.add(secondArgument);
         }
     }
 
@@ -29,10 +32,17 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         for (Symbol node : nodes) {
             if (uniqueCollection.contains(node)) {
                 duplicateNode = uniqueCollection.ceiling(node);
-                node = calculate(node, duplicateNode);
+                duplicateNode = calculate(node, duplicateNode);
                 uniqueCollection.remove(node);
+                if (uniqueCollection.contains(duplicateNode)){
+                    duplicateNode.compareTo(uniqueCollection.first());
+                    uniqueCollection.first();
+                }
+                uniqueCollection.add(duplicateNode);
+                uniqueCollection.size();
+            } else {
+                uniqueCollection.add(node);
             }
-            uniqueCollection.add(node);
         }
         return uniqueCollection;
     }
@@ -78,7 +88,7 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
                 }
             }
         }
-        return 0;
+        return result;
     }
 
 //    @Override

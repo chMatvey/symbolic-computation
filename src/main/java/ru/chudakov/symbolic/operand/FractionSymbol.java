@@ -1,24 +1,35 @@
 package ru.chudakov.symbolic.operand;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForFraction;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForFraction;
 
+import javax.xml.bind.annotation.*;
+
+@NoArgsConstructor
+@Getter
+@Setter
+@XmlRootElement(name = "fraction")
 public class FractionSymbol extends NumberSymbol {
     private Double denominator;
+
+    public Double getNumerator(){
+        return data;
+    }
+
+    @XmlElement(name = "numerator")
+    public void setNumerator(Double numerator) {
+        data = numerator;
+    }
 
     public FractionSymbol(Double numerator, Double denominator) {
         super(numerator);
         this.denominator = denominator;
-    }
-
-    public Double getNumerator() {
-        return data;
-    }
-
-    public Double getDenominator() {
-        return denominator;
     }
 
     @Override

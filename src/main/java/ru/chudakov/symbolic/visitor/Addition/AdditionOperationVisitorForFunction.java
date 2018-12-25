@@ -50,6 +50,9 @@ public class AdditionOperationVisitorForFunction implements OperationVisitor {
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
+        if (firstArgument.compareTo(secondArgument) == 0) {
+            new MulSymbol(firstArgument, new NumberSymbol(2d));
+        }
         return new SumSymbol(firstArgument, secondArgument);
     }
 }

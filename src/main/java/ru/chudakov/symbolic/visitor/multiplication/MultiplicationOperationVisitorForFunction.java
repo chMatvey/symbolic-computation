@@ -21,22 +21,22 @@ public class MultiplicationOperationVisitorForFunction implements OperationVisit
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return null;
+        return new MulSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return null;
+        return new MulSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return null;
+        return new MulSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        return null;
+        return secondArgument.mul(firstArgument);
     }
 
     @Override
@@ -46,11 +46,11 @@ public class MultiplicationOperationVisitorForFunction implements OperationVisit
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return null;
+        return secondArgument.mul(firstArgument);
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        return null;
+        return new MulSymbol(firstArgument, secondArgument);
     }
 }

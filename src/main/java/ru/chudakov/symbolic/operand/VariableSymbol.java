@@ -1,16 +1,23 @@
 package ru.chudakov.symbolic.operand;
 
+import lombok.*;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForVariable;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForVariable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@XmlRootElement(name = "variable")
 public class VariableSymbol extends OperandSymbol {
     private String name;
-
-    public VariableSymbol(String name) {
-        this.name = name;
-    }
 
     @Override
     public int getPriority() {
@@ -27,15 +34,15 @@ public class VariableSymbol extends OperandSymbol {
         return result;
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        boolean result = super.equals(obj);
-//        if (result) {
-//            VariableSymbol symbol = (VariableSymbol) obj;
-//            result = this.name.equals(symbol.name);
-//        }
-//        return result;
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        boolean result = super.equals(obj);
+        if (result) {
+            VariableSymbol symbol = (VariableSymbol) obj;
+            result = this.name.equals(symbol.name);
+        }
+        return result;
+    }
 
     @Override
     public Symbol add(Symbol secondArgument) {

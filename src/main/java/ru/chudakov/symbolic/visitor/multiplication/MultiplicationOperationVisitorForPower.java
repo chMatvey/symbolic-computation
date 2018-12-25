@@ -10,6 +10,9 @@ import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultiplicationOperationVisitorForPower implements OperationVisitor {
     private PowerSymbol firstArgument;
 
@@ -19,36 +22,53 @@ public class MultiplicationOperationVisitorForPower implements OperationVisitor 
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return null;
+        return new MulSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return null;
+        return new MulSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return null;
+        if (firstArgument.getBase().compareTo(secondArgument) == 0) {
+            firstArgument.incrementIndex();
+            return firstArgument;
+        } else {
+            return new MulSymbol(firstArgument, secondArgument);
+        }
     }
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        return null;
+        Symbol[] array = secondArgument.toArray();
+        List<Symbol> list = new ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            list.add(firstArgument.mul(array[i]));
+        }
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        return null;
+        return secondArgument.mul(firstArgument);
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return null;
+        if (firstArgument.compareTo(secondArgument) == 0) {
+            firstArgument.setIndex(
+                    firstArgument.getIndex().add(secondArgument.getIndex())
+            );
+            return firstArgument;
+        } else {
+            return new MulSymbol(firstArgument, secondArgument);
+        }
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        return null;
+        return new MulSymbol(firstArgument, secondArgument);
     }
 }

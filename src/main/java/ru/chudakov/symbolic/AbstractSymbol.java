@@ -29,13 +29,13 @@ public abstract class AbstractSymbol implements Symbol {
         return getPriority();
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj)
-//            return true;
-//        if (obj == null || this.getClass() != obj.getClass())
-//            return false;
-//        AbstractSymbol symbol = (AbstractSymbol) obj;
-//        return getPriority() == symbol.getPriority();
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || this.getClass() != obj.getClass())
+            return false;
+        AbstractSymbol symbol = (AbstractSymbol) obj;
+        return getPriority() == symbol.getPriority();
+    }
 }

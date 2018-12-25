@@ -50,20 +50,30 @@ public class MultiplicationOperationVisitorForMul implements OperationVisitor {
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        if (firstArgument.compareTo(secondArgument) == 0) {
-            return new PowerSymbol(firstArgument, new NumberSymbol(2d));
-        } else {
-            return null;
+        Symbol[] array = secondArgument.toArray();
+        for (int i = 0; i < array.length; i++) {
+            firstArgument.addBranch(array[i]);
         }
+        return firstArgument;
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return null;
+        Symbol[] array = firstArgument.toArray();
+        List<Symbol> list = new ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            if (secondArgument.getBase().compareTo(array[i]) == 0) {
+                list.add(array[i].mul(secondArgument));
+            } else {
+                list.add(array[i]);
+            }
+        }
+        return new MulSymbol(list);
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        return null;
+        firstArgument.addBranch(secondArgument);
+        return firstArgument;
     }
 }

@@ -1,12 +1,22 @@
 package ru.chudakov.symbolic.operation;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForMul;
+import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForMul;
 
+import javax.xml.bind.annotation.*;
 import java.util.Collection;
+import java.util.TreeSet;
 
+@NoArgsConstructor
+@Setter
+@XmlRootElement(name = "mul")
+@XmlType
 public class MulSymbol extends ArithmeticOperationSymbol {
 
     public MulSymbol(Collection<Symbol> nodes) {
@@ -17,6 +27,13 @@ public class MulSymbol extends ArithmeticOperationSymbol {
         super(firstArgument, secondArgument);
     }
 
+    @XmlAnyElement
+    @XmlElementWrapper(name = "arguments")
+    public TreeSet<Symbol> getBranches(){
+        return branches;
+    }
+
+    @XmlTransient
     public NumberSymbol getCoefficient() {
         NumberSymbol coefficient = new NumberSymbol(1d);
         if (branches.contains(coefficient)) {
@@ -54,7 +71,7 @@ public class MulSymbol extends ArithmeticOperationSymbol {
 
     @Override
     public Symbol mul(Symbol secondArgument) {
-        return super.mul(secondArgument);
+        return secondArgument.callVisitor(new MultiplicationOperationVisitorForMul(this));
     }
 
     @Override

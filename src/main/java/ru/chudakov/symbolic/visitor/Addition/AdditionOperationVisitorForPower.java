@@ -45,7 +45,11 @@ public class AdditionOperationVisitorForPower implements OperationVisitor {
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        if (firstArgument.compareTo(secondArgument) == 0) {
+            return new MulSymbol(firstArgument, new NumberSymbol(2d));
+        } else {
+            return new SumSymbol(firstArgument, secondArgument);
+        }
     }
 
     @Override

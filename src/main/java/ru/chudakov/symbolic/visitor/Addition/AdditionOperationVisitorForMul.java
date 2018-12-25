@@ -32,7 +32,12 @@ public class AdditionOperationVisitorForMul implements OperationVisitor {
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return new SumSymbol(firstArgument, secondArgument);
+        if (firstArgument.compareTo(secondArgument) == 0) {
+            firstArgument.incrementCoefficient();
+            return firstArgument;
+        } else {
+            return new SumSymbol(firstArgument, secondArgument);
+        }
     }
 
     @Override
@@ -43,7 +48,7 @@ public class AdditionOperationVisitorForMul implements OperationVisitor {
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        if (secondArgument.compareTo(secondArgument) == 0) {
+        if (firstArgument.compareTo(secondArgument) == 0) {
             firstArgument.setCoefficient(
                     (NumberSymbol) firstArgument.getCoefficient().add(
                             secondArgument.getCoefficient()

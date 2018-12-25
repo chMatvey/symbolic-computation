@@ -44,7 +44,7 @@ public class AdditionOperationVisitorForVariable implements OperationVisitor {
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        if (firstArgument.compareTo(secondArgument) == 0) {
+        if (secondArgument.compareTo(firstArgument) == 0) {
             secondArgument.incrementCoefficient();
             return secondArgument;
         } else {

@@ -1,5 +1,8 @@
 package ru.chudakov.symbolic.operation;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
 
@@ -7,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+@NoArgsConstructor
 public abstract class ArithmeticOperationSymbol extends OperationSymbol {
     protected TreeSet<Symbol> branches;
 

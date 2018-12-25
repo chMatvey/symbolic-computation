@@ -1,20 +1,20 @@
 package ru.chudakov.symbolic.operand;
 
+import lombok.*;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForNumber;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForNumber;
 
+import javax.xml.bind.annotation.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@XmlRootElement(name = "number")
 public class NumberSymbol extends OperandSymbol {
     protected Double data;
-
-    public NumberSymbol(Double data) {
-        this.data = data;
-    }
-
-    public Double getData() {
-        return data;
-    }
 
     @Override
     public Symbol add(Symbol secondArgument) {

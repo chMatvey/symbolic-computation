@@ -82,7 +82,7 @@ public class MulSymbol extends ArithmeticOperationSymbol {
     @Override
     public int compareTo(Symbol o) {
         int result = super.compareTo(o);
-        if (result != 0 && branches.size() == 2) {
+        if (result != 0 && branches.size() == 2 && branches.contains(new NumberSymbol(1d))) {
             result = branches.first().compareTo(o);
         }
         return result;

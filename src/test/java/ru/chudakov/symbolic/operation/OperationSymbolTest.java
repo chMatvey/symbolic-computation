@@ -24,4 +24,11 @@ public class OperationSymbolTest {
         list.add(new MulSymbol(new VariableSymbol("a"), new NumberSymbol(3d)));
         Symbol result = new SumSymbol(list);;
     }
+
+    @Test
+    public void testOperation() {
+        Symbol result = new VariableSymbol("a");
+        result = result.mul(new VariableSymbol("b"));
+        result = result.add(new VariableSymbol("a"));
+    }
 }

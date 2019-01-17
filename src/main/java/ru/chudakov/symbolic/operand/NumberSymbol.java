@@ -30,4 +30,9 @@ public class NumberSymbol extends OperandSymbol {
     public Symbol callVisitor(OperationVisitor visitor) {
         return visitor.calculateNumber(this);
     }
+
+    @Override
+    public String toString() {
+        return data.toString();
+    }
 }

@@ -19,6 +19,8 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
     }
 
     public ArithmeticOperationSymbol(@NotNull Symbol firstArgument, Symbol secondArgument) {
+        firstArgument = checkCache(firstArgument);
+        secondArgument = checkCache(secondArgument);
         branches = new TreeSet<>();
         if (firstArgument.compareTo(secondArgument) == 0) {
             branches.add(calculate(firstArgument, secondArgument));
@@ -30,15 +32,18 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
 
     protected abstract Symbol calculate(Symbol firstArgument, Symbol secondArgument);
 
+    protected abstract String getOperation();
+
     protected TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes) {
         TreeSet<Symbol> uniqueCollection = new TreeSet<>();
         Symbol duplicateNode;
         for (Symbol node : nodes) {
+            node = checkCache(node);
             if (uniqueCollection.contains(node)) {
                 duplicateNode = uniqueCollection.ceiling(node);
                 duplicateNode = calculate(node, duplicateNode);
                 uniqueCollection.remove(node);
-                if (uniqueCollection.contains(duplicateNode)){
+                if (uniqueCollection.contains(duplicateNode)) {
                     duplicateNode.compareTo(uniqueCollection.first());
                     uniqueCollection.first();
                 }
@@ -52,6 +57,7 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
     }
 
     public void addBranch(Symbol symbol) {
+        symbol = checkCache(symbol);
         if (branches.contains(symbol)) {
             Symbol duplicate = branches.ceiling(symbol);
             symbol = calculate(symbol, duplicate);
@@ -121,4 +127,14 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
 //        }
 //        return result;
 //    }
+
+
+    @Override
+    public String toString() {
+        String result = "(";
+        for (Symbol symbol : branches) {
+            result += symbol.toString() + getOperation();
+        }
+        return result.substring(0, result.length() - 1) + ")";
+    }
 }

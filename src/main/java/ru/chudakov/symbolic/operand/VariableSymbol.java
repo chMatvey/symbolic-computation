@@ -58,4 +58,9 @@ public class VariableSymbol extends OperandSymbol {
     public Symbol callVisitor(OperationVisitor visitor) {
         return visitor.calculateVariable(this);
     }
+
+    @Override
+    public String toString() {
+        return name.toString();
+    }
 }

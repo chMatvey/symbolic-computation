@@ -5,12 +5,23 @@ import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.writer.SymbolXMLEncoder;
 
 import javax.xml.bind.JAXBException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
-    public static void main(String[] args) throws JAXBException {
+    public static void main(String[] args) throws JAXBException, IOException {
         SymbolXMLEncoder encoder = new SymbolXMLEncoder();
-        FunctionsTreeExpression expression = new FunctionsTreeExpression();
-        Symbol result = expression.getSymbol("5+7+8+a+b+a*b");
-        encoder.encodeSymbolToXML(result);
+        FunctionsTreeExpression functionsTreeExpression = new FunctionsTreeExpression();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String expression = "";
+        while(true) {
+            System.out.println("Введите выражение");
+            expression = reader.readLine();
+            Symbol result = functionsTreeExpression.getSymbol(expression);
+            System.out.println(result.toString());
+            encoder.encodeSymbolToXML(result);
+            System.out.println("Выходное выражение записано в файл");
+        }
     }
 }

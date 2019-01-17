@@ -51,4 +51,9 @@ public class FractionSymbol extends NumberSymbol {
     public Symbol callVisitor(OperationVisitor visitor) {
         return visitor.calculateFraction(this);
     }
+
+    @Override
+    public String toString() {
+        return data.toString() + "/" + denominator.toString();
+    }
 }

@@ -28,9 +28,14 @@ public class MulSymbol extends ArithmeticOperationSymbol {
     }
 
     @XmlAnyElement
-    @XmlElementWrapper(name = "arguments")
+    //@XmlElementWrapper(name = "arguments")
     public TreeSet<Symbol> getBranches(){
         return branches;
+    }
+
+    @Override
+    protected String getOperation() {
+        return "*";
     }
 
     @XmlTransient

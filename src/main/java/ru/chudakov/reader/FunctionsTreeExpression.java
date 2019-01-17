@@ -4,12 +4,15 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
+import ru.chudakov.symbolic.cache.CacheSymbolSingleton;
 import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.operand.VariableSymbol;
+import ru.chudakov.symbolic.operation.FunctionSymbol;
 import ru.chudakov.symbolic.operation.MulSymbol;
-import ru.chudakov.symbolic.operation.SumSymbol;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FunctionsTreeExpression {
     private List<String> functions;
@@ -21,6 +24,7 @@ public class FunctionsTreeExpression {
 
     private Stack<String> stackOperation = new Stack<>();
     private Stack<String> stackReservePolishNotation = new Stack<>();
+    private Stack<String> stackValuesOfVariables = new Stack<>();
     //private Stack<String> stackResult = new Stack<>();
 
     public FunctionsTreeExpression() {
@@ -36,16 +40,29 @@ public class FunctionsTreeExpression {
         variables.add("d");
         variables.add("e");
         variables.add("f");
+        variables.add("g");
+        variables.add("h");
+        variables.add("i");
+        variables.add("j");
+        variables.add("k");
+        variables.add("l");
+        variables.add("m");
+        variables.add("n");
+        variables.add("o");
+        variables.add("p");
+        variables.add("q");
+        variables.add("r");
+        variables.add("s");
+        variables.add("t");
+        variables.add("w");
+        variables.add("x");
+        variables.add("y");
+        variables.add("z");
         operators = new ArrayList<>();
         operators.add("+");
         operators.add("-");
         operators.add("*");
         operators.add("/");
-    }
-
-    @Contract(pure = true)
-    private boolean isFunction(String token) {
-        return functions.contains(token);
     }
 
     @Contract(pure = true)
@@ -76,6 +93,11 @@ public class FunctionsTreeExpression {
         if (token.equals("+") || token.equals("-"))
             return 1;
         return 2;
+    }
+
+    private boolean isFunction(String token) {
+        Pattern pattern = Pattern.compile("\\w+\\(\\w+(,\\w+)*\\)");
+        return pattern.matcher(token).matches();
     }
 
     private void parse(String expression) {
@@ -125,23 +147,26 @@ public class FunctionsTreeExpression {
             stackReservePolishNotation.push(stackOperation.pop());
         }
         Collections.reverse(stackReservePolishNotation);
-//        for (String str : stackReservePolishNotation) {
-//            System.out.println(str);
-//        }
     }
 
-    public Symbol getSymbol(String expression) {
-        parse(expression);
+    private Symbol readSymbolFromStack() {
         Symbol result;
-        if (NumberUtils.isNumber(stackReservePolishNotation.lastElement())) {
-            result = new NumberSymbol(Double.parseDouble(stackReservePolishNotation.pop()));
+        String lastElement = stackReservePolishNotation.pop();;
+        if (!stackValuesOfVariables.empty() && !NumberUtils.isNumber(lastElement)) {
+            lastElement = stackValuesOfVariables.pop();
+        }
+        if (NumberUtils.isNumber(lastElement)) {
+            result = new NumberSymbol(Double.parseDouble(lastElement));
         } else {
-            result = new VariableSymbol(stackReservePolishNotation.pop());
+            result = new VariableSymbol(lastElement);
         }
         Symbol secondOperand = null;
         while (!stackReservePolishNotation.empty()) {
-            String lastElement = stackReservePolishNotation.pop();
+            lastElement = stackReservePolishNotation.pop();
             if (!isOperator(lastElement)) {
+                if (!stackValuesOfVariables.empty()){
+                    lastElement = stackValuesOfVariables.pop();
+                }
                 if (NumberUtils.isNumber(lastElement)) {
                     secondOperand = new NumberSymbol(Double.parseDouble(lastElement));
                 } else {
@@ -154,6 +179,55 @@ public class FunctionsTreeExpression {
             } else if (lastElement.equals("*")) {
                 result = result.mul(secondOperand);
             }
+        }
+        return result;
+    }
+
+    public Symbol getSymbol(String expression) {
+        stackValuesOfVariables.clear();
+        Symbol result;
+        if (isFunction(expression)) {
+            String parts[] = {
+                    expression.substring(0, 1),
+                    expression.replace("(", "").replace(")", "").substring(1)
+            };
+            if (parts.length > 2)
+                return null;
+            parse(parts[0]);
+            Symbol key = readSymbolFromStack();
+            CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+            if (cache.getData().containsKey(key)) {
+                FunctionSymbol value = (FunctionSymbol) cache.getData().get(key);
+                String argsStr[] = parts[1].split(",");
+                List<Symbol> args = new ArrayList<>();
+                for (String str : argsStr) {
+                    //parse(str);
+                    //args.add(readSymbolFromStack());
+                    stackValuesOfVariables.push(str);
+                }
+                Collections.reverse(stackValuesOfVariables);
+                parse(value.getExpression());
+                result = readSymbolFromStack();
+                //result = value.calculate(args);
+            } else {
+                result = null;
+            }
+        } else if (expression.contains("=")) {
+            String parts[] = expression.split("=");
+            if (parts.length > 2)
+                return null;
+            parse(parts[0]);
+            Symbol key = readSymbolFromStack();
+            parse(parts[1]);
+            Symbol value = readSymbolFromStack();
+            if (parts[0].contains("(")) {
+                value = new FunctionSymbol(value, parts[1], ((VariableSymbol)key).getName());
+            }
+            CacheSymbolSingleton.getInstance().addSymbol(key, value);
+            result = value;
+        } else {
+            parse(expression);
+            result = readSymbolFromStack();
         }
         return result;
     }

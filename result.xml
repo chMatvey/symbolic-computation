@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+
+
 <sum>
-	<arguments>
-		<power>
-			<variable><name>b</name></variable>
-			<number><data>2.0</data></number>
-		</power>
-			<mul>
-				<arguments>
-					<variable><name>a</name></variable>
-					<variable><name>b</name></variable>
-			</arguments>
-			</mul>
-			<mul><arguments><variable><name>b</name></variable><number><data>20.0</data></number></arguments></mul><variable><name>b</name></variable></arguments>
+	<mul>
+		<variable><name>a</name></variable>
+		<variable><name>c</name></variable>
+	</mul>
+	<variable><name>c</name></variable>
 </sum>

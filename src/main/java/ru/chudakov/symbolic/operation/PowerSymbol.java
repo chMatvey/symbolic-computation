@@ -74,4 +74,10 @@ public class PowerSymbol extends OperationSymbol {
 //        }
 //        return result;
 //    }
+
+
+    @Override
+    public String toString() {
+        return "(" + base.toString() + "^" + index.toString() + ")";
+    }
 }

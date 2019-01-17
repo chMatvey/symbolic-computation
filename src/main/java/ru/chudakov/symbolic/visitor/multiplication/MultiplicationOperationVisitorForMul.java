@@ -20,22 +20,25 @@ public class MultiplicationOperationVisitorForMul implements OperationVisitor {
         this.firstArgument = firstArgument;
     }
 
+    private Symbol calculateSymbol(Symbol secondArgument) {
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.add(secondArgument);
+        return new MulSymbol(list);
+    }
+
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
@@ -50,11 +53,9 @@ public class MultiplicationOperationVisitorForMul implements OperationVisitor {
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        Symbol[] array = secondArgument.toArray();
-        for (int i = 0; i < array.length; i++) {
-            firstArgument.addBranch(array[i]);
-        }
-        return firstArgument;
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.addAll(secondArgument.getBranches());
+        return new MulSymbol(list);
     }
 
     @Override
@@ -73,7 +74,6 @@ public class MultiplicationOperationVisitorForMul implements OperationVisitor {
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        return calculateSymbol(secondArgument);
     }
 }

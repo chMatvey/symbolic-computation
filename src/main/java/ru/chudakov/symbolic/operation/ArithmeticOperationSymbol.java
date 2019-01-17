@@ -6,11 +6,10 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 @NoArgsConstructor
+@Getter
 public abstract class ArithmeticOperationSymbol extends OperationSymbol {
     protected TreeSet<Symbol> branches;
 
@@ -56,15 +55,15 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         return uniqueCollection;
     }
 
-    public void addBranch(Symbol symbol) {
-        symbol = checkCache(symbol);
-        if (branches.contains(symbol)) {
-            Symbol duplicate = branches.ceiling(symbol);
-            symbol = calculate(symbol, duplicate);
-            branches.remove(duplicate);
-        }
-        branches.add(symbol);
-    }
+//    public void addBranch(Symbol symbol) {
+//        symbol = checkCache(symbol);
+//        if (branches.contains(symbol)) {
+//            Symbol duplicate = branches.ceiling(symbol);
+//            symbol = calculate(symbol, duplicate);
+//            branches.remove(duplicate);
+//        }
+//        branches.add(symbol);
+//    }
 
     public Symbol[] toArray() {
         return branches.toArray(new Symbol[0]);

@@ -9,6 +9,7 @@ import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.operand.VariableSymbol;
 import ru.chudakov.symbolic.operation.FunctionSymbol;
 import ru.chudakov.symbolic.operation.MulSymbol;
+import ru.chudakov.symbolic.operation.SumSymbol;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -150,37 +151,46 @@ public class FunctionsTreeExpression {
     }
 
     private Symbol readSymbolFromStack() {
-        Symbol result;
-        String lastElement = stackReservePolishNotation.pop();;
-        if (!stackValuesOfVariables.empty() && !NumberUtils.isNumber(lastElement)) {
-            lastElement = stackValuesOfVariables.pop();
-        }
-        if (NumberUtils.isNumber(lastElement)) {
-            result = new NumberSymbol(Double.parseDouble(lastElement));
-        } else {
-            result = new VariableSymbol(lastElement);
-        }
-        Symbol secondOperand = null;
+//        Symbol result = null;
+        Symbol firstArgument = null;
+        Symbol secondArgument = null;
+        Symbol thirdArgument = null;
+        String lastElement = "";
+//        String lastElement = stackReservePolishNotation.pop();;
+//        if (!stackValuesOfVariables.empty() && !NumberUtils.isNumber(lastElement)) {
+//            lastElement = stackValuesOfVariables.pop();
+//        }
+//        if (NumberUtils.isNumber(lastElement)) {
+//            result = new NumberSymbol(Double.parseDouble(lastElement));
+//        } else {
+//            result = new VariableSymbol(lastElement);
+//        }
+//        Symbol secondOperand = null;
         while (!stackReservePolishNotation.empty()) {
             lastElement = stackReservePolishNotation.pop();
             if (!isOperator(lastElement)) {
                 if (!stackValuesOfVariables.empty()){
                     lastElement = stackValuesOfVariables.pop();
                 }
+                thirdArgument = secondArgument;
+                secondArgument = firstArgument;
                 if (NumberUtils.isNumber(lastElement)) {
-                    secondOperand = new NumberSymbol(Double.parseDouble(lastElement));
+                    firstArgument = new NumberSymbol(Double.parseDouble(lastElement));
                 } else {
-                    secondOperand = new VariableSymbol(lastElement);
+                    firstArgument = new VariableSymbol(lastElement);
                 }
-            } else if (lastElement.equals("+")) {
-                result = result.add(secondOperand);
-            } else if (lastElement.equals("-")) {
-                result = result.add(new MulSymbol(secondOperand, new NumberSymbol(-1d)));
-            } else if (lastElement.equals("*")) {
-                result = result.mul(secondOperand);
+            } else {
+                if (lastElement.equals("+")) {
+                    firstArgument = firstArgument.add(secondArgument);
+                } else if (lastElement.equals("-")) {
+                    firstArgument = firstArgument.add(new NumberSymbol(-1d)).add(secondArgument);
+                } else if (lastElement.equals("*")) {
+                    firstArgument = firstArgument.mul(secondArgument);
+                }
+                secondArgument = thirdArgument;
             }
         }
-        return result;
+        return firstArgument;
     }
 
     public Symbol getSymbol(String expression) {

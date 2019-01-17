@@ -33,8 +33,10 @@ public class MultiplicationOperationVisitorForPower implements OperationVisitor 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
         if (firstArgument.getBase().compareTo(secondArgument) == 0) {
-            firstArgument.incrementIndex();
-            return firstArgument;
+            return new PowerSymbol(
+                    firstArgument.getBase(),
+                    firstArgument.getIndex().add(new NumberSymbol(1d))
+            );
         } else {
             return new MulSymbol(firstArgument, secondArgument);
         }

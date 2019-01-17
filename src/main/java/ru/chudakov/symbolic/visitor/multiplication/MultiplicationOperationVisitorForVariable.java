@@ -51,15 +51,18 @@ public class MultiplicationOperationVisitorForVariable implements OperationVisit
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        secondArgument.addBranch(firstArgument);
-        return secondArgument;
+        List<Symbol> list = new ArrayList<>(secondArgument.getBranches());
+        list.add(firstArgument);
+        return new MulSymbol(list);
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
         if (secondArgument.getBase().compareTo(firstArgument) == 0) {
-            secondArgument.incrementIndex();
-            return secondArgument;
+            return new PowerSymbol(
+                    secondArgument.getBase(),
+                    secondArgument.getIndex().add(new NumberSymbol(1d))
+            );
         } else {
             return new MulSymbol(firstArgument, secondArgument);
         }

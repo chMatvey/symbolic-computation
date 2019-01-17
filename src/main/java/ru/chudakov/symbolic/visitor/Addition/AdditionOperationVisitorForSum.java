@@ -10,6 +10,9 @@ import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdditionOperationVisitorForSum implements OperationVisitor {
     private SumSymbol firstArgument;
 
@@ -19,46 +22,52 @@ public class AdditionOperationVisitorForSum implements OperationVisitor {
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.add(secondArgument);
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.add(secondArgument);
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.add(secondArgument);
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        Symbol[] array = secondArgument.toArray();
-        for (int i = 0; i < array.length; i++) {
-            firstArgument.addBranch(array[i]);
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        for (Symbol symbol : secondArgument.getBranches()) {
+            list.add(symbol);
         }
-        return firstArgument;
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.add(secondArgument);
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.add(secondArgument);
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        firstArgument.addBranch(secondArgument);
-        return firstArgument;
+        List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
+        list.add(secondArgument);
+        return new SumSymbol(list);
     }
 }

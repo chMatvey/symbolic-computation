@@ -11,6 +11,10 @@ import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 public class AdditionOperationVisitorForFraction implements OperationVisitor {
     private FractionSymbol firstArgument;
 
@@ -43,14 +47,16 @@ public class AdditionOperationVisitorForFraction implements OperationVisitor {
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        secondArgument.addBranch(firstArgument);
-        return secondArgument;
+        List<Symbol> list = new ArrayList<>(secondArgument.getBranches());
+        list.add(firstArgument);
+        return new SumSymbol(list);
     }
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        secondArgument.addBranch(firstArgument);
-        return secondArgument;
+        List<Symbol> list = new ArrayList<>(secondArgument.getBranches());
+        list.add(firstArgument);
+        return new MulSymbol(list);
     }
 
     @Override

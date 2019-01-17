@@ -10,6 +10,9 @@ import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdditionOperationVisitorForFunction implements OperationVisitor {
     private FunctionSymbol firstArgument;
 
@@ -34,8 +37,9 @@ public class AdditionOperationVisitorForFunction implements OperationVisitor {
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        secondArgument.addBranch(firstArgument);
-        return secondArgument;
+        List<Symbol> list = new ArrayList<>(secondArgument.getBranches());
+        list.add(firstArgument);
+        return new SumSymbol(list);
     }
 
     @Override

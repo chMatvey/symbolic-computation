@@ -1,11 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-
-
-
-<sum>
-	<mul>
-		<variable><name>a</name></variable>
-		<variable><name>c</name></variable>
-	</mul>
-	<variable><name>c</name></variable>
-</sum>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><sum><power><variable><name>a</name></variable><number><data>3.0</data></number></power><power><variable><name>b</name></variable><number><data>3.0</data></number></power><mul><power><variable><name>a</name></variable><number><data>2.0</data></number></power><variable><name>b</name></variable><number><data>3.0</data></number></mul><mul><power><variable><name>b</name></variable><number><data>2.0</data></number></power><variable><name>a</name></variable><number><data>3.0</data></number></mul></sum>

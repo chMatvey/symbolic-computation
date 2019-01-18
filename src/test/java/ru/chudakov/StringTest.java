@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 public class StringTest {
     @Test
     public void split(){
-        Pattern pattern = Pattern.compile("\\w+\\(\\w+(,\\w+)*\\)");
-        Matcher matcher = pattern.matcher("qw(1,2,3)");
+        Pattern pattern = Pattern.compile("\\w+\\(.+(,.+)*\\)");
+        Matcher matcher = pattern.matcher("length(a,a+b)");
         System.out.println(matcher.matches());
     }
 }

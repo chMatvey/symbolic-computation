@@ -9,7 +9,6 @@ import ru.chudakov.symbolic.operation.MulSymbol;
 import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
-import ru.chudakov.symbolic.visitor.compare.CompareOperationVisitorForPower;
 
 import java.util.ArrayList;
 import java.util.List;

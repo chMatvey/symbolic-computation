@@ -8,32 +8,26 @@ import ru.chudakov.symbolic.cache.CacheSymbolSingleton;
 import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.operand.VariableSymbol;
 import ru.chudakov.symbolic.operation.FunctionSymbol;
-import ru.chudakov.symbolic.operation.MulSymbol;
-import ru.chudakov.symbolic.operation.SumSymbol;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FunctionsTreeExpression {
     private List<String> functions;
+    private List<String> standardFunctions;
     private List<String> variables;
     private List<String> operators;
     private final String separator = ",";
     private final String openBracket = "(";
     private final String closeBracket = ")";
+    private List<String> variablesFunction;
+    private List<String> valuesOfVariablesOfFunction;
 
     private Stack<String> stackOperation = new Stack<>();
     private Stack<String> stackReservePolishNotation = new Stack<>();
-    private Stack<String> stackValuesOfVariables = new Stack<>();
-    //private Stack<String> stackResult = new Stack<>();
 
     public FunctionsTreeExpression() {
         functions = new ArrayList<>();
-        functions.add("sin");
-        functions.add("cos");
-        functions.add("tg");
-        functions.add("ctg");
         variables = new ArrayList<>();
         variables.add("a");
         variables.add("b");
@@ -64,6 +58,15 @@ public class FunctionsTreeExpression {
         operators.add("-");
         operators.add("*");
         operators.add("/");
+        operators.add("^");
+        standardFunctions = new ArrayList<>();
+        standardFunctions.add("first");
+        standardFunctions.add("last");
+        standardFunctions.add("length");
+        standardFunctions.add("while");
+        standardFunctions.add("if");
+        variablesFunction = new ArrayList<>();
+        valuesOfVariablesOfFunction = new ArrayList<>();
     }
 
     @Contract(pure = true)
@@ -97,8 +100,10 @@ public class FunctionsTreeExpression {
     }
 
     private boolean isFunction(String token) {
-        Pattern pattern = Pattern.compile("\\w+\\(\\w+(,\\w+)*\\)");
-        return pattern.matcher(token).matches();
+//        Pattern pattern = Pattern.compile("\\w+\\(\\w+(,\\w+)*\\)");
+//        return pattern.matcher(token).matches();
+        return functions.contains(token) || standardFunctions.contains(token) ||
+                CacheSymbolSingleton.getInstance().getData().containsKey(new VariableSymbol(token));
     }
 
     private void parse(String expression) {
@@ -151,87 +156,146 @@ public class FunctionsTreeExpression {
     }
 
     private Symbol readSymbolFromStack() {
-//        Symbol result = null;
-        Symbol firstArgument = null;
-        Symbol secondArgument = null;
-        Symbol thirdArgument = null;
+        Stack<Symbol> arguments = new Stack<>();
+        Stack<String> argumentsString = new Stack<>();
         String lastElement = "";
-//        String lastElement = stackReservePolishNotation.pop();;
-//        if (!stackValuesOfVariables.empty() && !NumberUtils.isNumber(lastElement)) {
-//            lastElement = stackValuesOfVariables.pop();
-//        }
-//        if (NumberUtils.isNumber(lastElement)) {
-//            result = new NumberSymbol(Double.parseDouble(lastElement));
-//        } else {
-//            result = new VariableSymbol(lastElement);
-//        }
-//        Symbol secondOperand = null;
+        if (isFunction(stackReservePolishNotation.lastElement())) {
+            Collections.reverse(stackReservePolishNotation);
+        }
         while (!stackReservePolishNotation.empty()) {
             lastElement = stackReservePolishNotation.pop();
-            if (!isOperator(lastElement)) {
-                if (!stackValuesOfVariables.empty()){
-                    lastElement = stackValuesOfVariables.pop();
+            if (!isOperator(lastElement)&&!isFunction(lastElement)) {
+                if (variablesFunction.contains(lastElement)) {
+                    lastElement = valuesOfVariablesOfFunction.get(
+                            variablesFunction.indexOf(lastElement)
+                    );
                 }
-                thirdArgument = secondArgument;
-                secondArgument = firstArgument;
+                //thirdArgument = secondArgument;
+                //secondArgument = firstArgument;
                 if (NumberUtils.isNumber(lastElement)) {
-                    firstArgument = new NumberSymbol(Double.parseDouble(lastElement));
+                    arguments.push(new NumberSymbol(Double.parseDouble(lastElement)));
+                    //firstArgument = new NumberSymbol(Double.parseDouble(lastElement));
                 } else {
-                    firstArgument = new VariableSymbol(lastElement);
+                    arguments.push(new VariableSymbol(lastElement));
+                    //firstArgument = new VariableSymbol(lastElement);
                 }
+                argumentsString.push(lastElement);
+            } else if (lastElement.equals("+")) {
+                arguments.push(arguments.pop().add(arguments.pop()));
+                argumentsString.push(argumentsString.pop() + "+" + argumentsString.pop());
+                //firstArgument = firstArgument.add(secondArgument);
+            } else if (lastElement.equals("-")) {
+                arguments.push(arguments.pop().mul(new NumberSymbol(-1d)).add(arguments.pop()));
+                argumentsString.push(argumentsString.pop() + "-" + argumentsString.pop());
+                //firstArgument = secondArgument.add(firstArgument.mul(new NumberSymbol(-1d)));
+            } else if (lastElement.equals("*")) {
+                arguments.push(arguments.pop().mul(arguments.pop()));
+                argumentsString.push(argumentsString.pop() + "*" + argumentsString.pop());
+                //firstArgument = firstArgument.mul(secondArgument);
+            } else if (isFunction(lastElement)) {
+                valuesOfVariablesOfFunction = new ArrayList<>(argumentsString);
+                CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+                if (cache.getData().containsKey(new VariableSymbol(lastElement))) {
+                    variablesFunction = cache.getVariableFunction()
+                            .get(new VariableSymbol(lastElement));
+                }
+                return calculateFunction(lastElement);
+                //secondArgument = thirdArgument;
             } else {
-                if (lastElement.equals("+")) {
-                    firstArgument = firstArgument.add(secondArgument);
-                } else if (lastElement.equals("-")) {
-                    firstArgument = firstArgument.add(new NumberSymbol(-1d)).add(secondArgument);
-                } else if (lastElement.equals("*")) {
-                    firstArgument = firstArgument.mul(secondArgument);
-                }
-                secondArgument = thirdArgument;
+                return null;
             }
         }
-        return firstArgument;
+        CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+        return arguments.pop();
+        //return firstArgument;
+    }
+
+    private Symbol calculateFunction(String functionType) {
+        if (functionType.equals("length")) {
+            parse(valuesOfVariablesOfFunction.get(0));
+            Symbol symbol = readSymbolFromStack();
+            int length = symbol.length();
+            return new NumberSymbol(new Double(length));
+        } else if (functionType.equals("first")) {
+            parse(valuesOfVariablesOfFunction.get(0));
+            return readSymbolFromStack().getFirst();
+        } else if (functionType.equals("last")) {
+            parse(valuesOfVariablesOfFunction.get(0));
+            return readSymbolFromStack().getLast();
+        } else if (functionType.equals("while")) {
+            return null;
+        } else if (functionType.equals("if")) {
+            return null;
+        } else if (CacheSymbolSingleton.getInstance().getData().containsKey(new VariableSymbol(functionType))){
+            CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+            FunctionSymbol functionSymbol = (FunctionSymbol) cache.getData()
+                    .get(new VariableSymbol(functionType));
+            parse(functionSymbol.getExpression());
+            return readSymbolFromStack();
+        } else {
+            return null;
+        }
     }
 
     public Symbol getSymbol(String expression) {
-        stackValuesOfVariables.clear();
+        CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+        variablesFunction = new ArrayList<>();
+        valuesOfVariablesOfFunction= new ArrayList<>();
         Symbol result;
-        if (isFunction(expression)) {
-            String parts[] = {
-                    expression.substring(0, 1),
-                    expression.replace("(", "").replace(")", "").substring(1)
-            };
-            if (parts.length > 2)
-                return null;
-            parse(parts[0]);
-            Symbol key = readSymbolFromStack();
-            CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
-            if (cache.getData().containsKey(key)) {
-                FunctionSymbol value = (FunctionSymbol) cache.getData().get(key);
-                String argsStr[] = parts[1].split(",");
-                List<Symbol> args = new ArrayList<>();
-                for (String str : argsStr) {
-                    //parse(str);
-                    //args.add(readSymbolFromStack());
-                    stackValuesOfVariables.push(str);
-                }
-                Collections.reverse(stackValuesOfVariables);
-                parse(value.getExpression());
-                result = readSymbolFromStack();
-                //result = value.calculate(args);
-            } else {
-                result = null;
-            }
-        } else if (expression.contains("=")) {
+//        if (isFunction(expression)) {
+//            String parts[] = {
+//                    expression.substring(0, 1),
+//                    expression.replace("(", "").replace(")", "").substring(1)
+//            };
+//            if (parts.length > 2)
+//                return null;
+//            parse(parts[0]);
+//            Symbol key = readSymbolFromStack();
+//            CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+//            if (cache.getData().containsKey(key)) {
+//                FunctionSymbol value = (FunctionSymbol) cache.getData().get(key);
+//                variablesFunction = new ArrayList<>(
+//                        cache.getVariableFunction().get(key)
+//                );
+//                String str[] = parts[1].split(",");
+//                for (String s : str) {
+//                    valuesOfVariablesOfFunction.add(s);
+//                }
+//                if (variablesFunction.size() != valuesOfVariablesOfFunction.size()) {
+//                    return null;
+//                }
+//                parse(value.getExpression());
+//                result = readSymbolFromStack();
+//            } else {
+//                result = null;
+//            }
+//        }
+        if (expression.contains("=")) {
             String parts[] = expression.split("=");
             if (parts.length > 2)
                 return null;
+            if (parts[0].contains("(")) {
+                parts[0] = parts[0].substring(0, parts[0].indexOf("("));
+            }
             parse(parts[0]);
+            Collections.reverse(stackReservePolishNotation);
             Symbol key = readSymbolFromStack();
             parse(parts[1]);
             Symbol value = readSymbolFromStack();
-            if (parts[0].contains("(")) {
-                value = new FunctionSymbol(value, parts[1], ((VariableSymbol)key).getName());
+            if (expression.contains("(")) {
+                value = new FunctionSymbol(value, parts[1]);
+                String strArgs = expression.split("=")[0];
+                String args[] = strArgs
+                        .replace("(", "")
+                        .replace(")", "")
+                        .substring(1)
+                        .split(",");
+                List<String> list = new ArrayList<>();
+                for (String s : args) {
+                    list.add(s);
+                }
+                //CacheSymbolSingleton.getInstance().getData().remove(key);
+                CacheSymbolSingleton.getInstance().addVariableFunction(key, list);
             }
             CacheSymbolSingleton.getInstance().addSymbol(key, value);
             result = value;

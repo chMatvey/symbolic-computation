@@ -59,11 +59,11 @@ public class MultiplicationOperationVisitorForPower implements OperationVisitor 
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        if (firstArgument.compareTo(secondArgument) == 0) {
-            firstArgument.setIndex(
+        if (firstArgument.getBase().compareTo(secondArgument.getBase()) == 0) {
+            return new PowerSymbol(
+                    firstArgument.getBase(),
                     firstArgument.getIndex().add(secondArgument.getIndex())
             );
-            return firstArgument;
         } else {
             return new MulSymbol(firstArgument, secondArgument);
         }

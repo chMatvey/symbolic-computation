@@ -49,8 +49,11 @@ public class AdditionOperationVisitorForVariable implements OperationVisitor {
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
         if (secondArgument.compareTo(firstArgument) == 0) {
-            secondArgument.incrementCoefficient();
-            return secondArgument;
+            List<Symbol> list = new ArrayList<>(secondArgument.getBranches());
+            list.add(new NumberSymbol(1d));
+            SumSymbol symbol = new SumSymbol(list);
+            list = new ArrayList<>(symbol.getBranches());
+            return new MulSymbol(list);
         } else {
             return new SumSymbol(firstArgument, secondArgument);
         }

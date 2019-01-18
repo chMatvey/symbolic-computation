@@ -5,11 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
+import ru.chudakov.symbolic.operand.NumberSymbol;
 
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
 
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
 public abstract class ArithmeticOperationSymbol extends OperationSymbol {
     protected TreeSet<Symbol> branches;
 
@@ -55,23 +57,42 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         return uniqueCollection;
     }
 
-//    public void addBranch(Symbol symbol) {
-//        symbol = checkCache(symbol);
-//        if (branches.contains(symbol)) {
-//            Symbol duplicate = branches.ceiling(symbol);
-//            symbol = calculate(symbol, duplicate);
-//            branches.remove(duplicate);
-//        }
-//        branches.add(symbol);
-//    }
-
     public Symbol[] toArray() {
         return branches.toArray(new Symbol[0]);
+    }
+
+    public NumberSymbol getCoefficient() {
+        NumberSymbol coefficient = new NumberSymbol(1d);
+        if (branches.contains(coefficient)) {
+            return (NumberSymbol) branches.ceiling(coefficient);
+        } else {
+            return coefficient;
+        }
     }
 
     @Override
     public int getPriority() {
         return -2;
+    }
+
+    @Override
+    public Symbol getFirst() {
+        return branches.first();
+    }
+
+    @Override
+    public Symbol getLast() {
+        return branches.last();
+    }
+
+    @Override
+    public int length() {
+//        int result = 0;
+//        for (Symbol symbol : branches) {
+//            result += symbol.length();
+//        }
+//        return result;
+        return branches.size();
     }
 
     @Override
@@ -126,7 +147,6 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
 //        }
 //        return result;
 //    }
-
 
     @Override
     public String toString() {

@@ -6,6 +6,7 @@ import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForFunction;
+import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisitorForFunction;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForFunction;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -23,9 +24,7 @@ public class FunctionSymbol extends OperationSymbol {
     @XmlAnyElement
     protected Symbol argument;
 
-    private String expression;
-
-    private String name;
+    protected String expression;
 
     public FunctionSymbol(Symbol argument) {
         this.argument = argument;
@@ -34,12 +33,6 @@ public class FunctionSymbol extends OperationSymbol {
     public FunctionSymbol(Symbol argument, String expression) {
         this.argument = argument;
         this.expression = expression;
-    }
-
-    public FunctionSymbol(Symbol argument, String expression, String name) {
-        this.argument = argument;
-        this.expression = expression;
-        this.name = name;
     }
 
     @Override
@@ -68,6 +61,11 @@ public class FunctionSymbol extends OperationSymbol {
     @Override
     public Symbol mul(Symbol secondArgument) {
         return secondArgument.callVisitor(new MultiplicationOperationVisitorForFunction(this));
+    }
+
+    @Override
+    public Symbol pow(Symbol secondArgument) {
+        return secondArgument.callVisitor(new ExponentiationOperationVisitorForFunction(this));
     }
 
     @Override

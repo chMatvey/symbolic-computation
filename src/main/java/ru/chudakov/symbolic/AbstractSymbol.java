@@ -18,4 +18,19 @@ public abstract class AbstractSymbol implements Symbol {
         AbstractSymbol symbol = (AbstractSymbol) obj;
         return getPriority() == symbol.getPriority();
     }
+
+    @Override
+    public Symbol getFirst() {
+        return this;
+    }
+
+    @Override
+    public Symbol getLast() {
+        return this;
+    }
+
+    @Override
+    public int length() {
+        return 1;
+    }
 }

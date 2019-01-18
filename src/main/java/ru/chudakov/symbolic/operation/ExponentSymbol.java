@@ -6,7 +6,6 @@ import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class ExponentSymbol extends FunctionSymbol {
     public ExponentSymbol(Symbol argument) {

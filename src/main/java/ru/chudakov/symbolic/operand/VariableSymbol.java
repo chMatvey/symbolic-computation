@@ -4,6 +4,7 @@ import lombok.*;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForVariable;
+import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisitorForVariable;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForVariable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -52,6 +53,11 @@ public class VariableSymbol extends OperandSymbol {
     @Override
     public Symbol mul(Symbol secondArgument) {
         return secondArgument.callVisitor(new MultiplicationOperationVisitorForVariable(this));
+    }
+
+    @Override
+    public Symbol pow(Symbol secondArgument) {
+        return secondArgument.callVisitor(new ExponentiationOperationVisitorForVariable(this));
     }
 
     @Override

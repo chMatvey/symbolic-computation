@@ -9,5 +9,13 @@ public interface Symbol extends Comparable<Symbol> {
 
     public Symbol mul(Symbol secondArgument);
 
+    public Symbol pow(Symbol secondArgument);
+
     public Symbol callVisitor(OperationVisitor visitor);
+
+    public Symbol getFirst();
+
+    public Symbol getLast();
+
+    public int length();
 }

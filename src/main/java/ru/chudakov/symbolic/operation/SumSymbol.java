@@ -6,13 +6,14 @@ import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForSum;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
+import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisitorForSum;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForSum;
 
 import javax.xml.bind.annotation.*;
 import java.util.Collection;
 import java.util.TreeSet;
 
-@Setter
+@Getter
 @NoArgsConstructor
 @XmlRootElement(name = "sum")
 public class SumSymbol extends ArithmeticOperationSymbol {
@@ -49,6 +50,11 @@ public class SumSymbol extends ArithmeticOperationSymbol {
     @Override
     public Symbol mul(Symbol secondArgument) {
         return secondArgument.callVisitor(new MultiplicationOperationVisitorForSum(this));
+    }
+
+    @Override
+    public Symbol pow(Symbol secondArgument) {
+        return secondArgument.callVisitor(new ExponentiationOperationVisitorForSum(this));
     }
 
     @Override

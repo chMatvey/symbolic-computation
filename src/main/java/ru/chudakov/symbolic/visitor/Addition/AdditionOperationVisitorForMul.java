@@ -9,9 +9,12 @@ import ru.chudakov.symbolic.operation.MulSymbol;
 import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
+import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class AdditionOperationVisitorForMul implements OperationVisitor {
     private MulSymbol firstArgument;
@@ -32,12 +35,7 @@ public class AdditionOperationVisitorForMul implements OperationVisitor {
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        if (firstArgument.compareTo(secondArgument) == 0) {
-            firstArgument.incrementCoefficient();
-            return firstArgument;
-        } else {
-            return new SumSymbol(firstArgument, secondArgument);
-        }
+        return new AdditionOperationVisitorForVariable(secondArgument).calculateMul(firstArgument);
     }
 
     @Override
@@ -50,12 +48,10 @@ public class AdditionOperationVisitorForMul implements OperationVisitor {
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
         if (firstArgument.compareTo(secondArgument) == 0) {
-            firstArgument.setCoefficient(
-                    (NumberSymbol) firstArgument.getCoefficient().add(
-                            secondArgument.getCoefficient()
-                    )
-            );
-            return firstArgument;
+            Set<Symbol> set = new TreeSet<>(firstArgument.getBranches());
+            set.remove(firstArgument.getCoefficient());
+            set.add(firstArgument.getCoefficient().add(secondArgument.getCoefficient()));
+            return new MulSymbol(set);
         } else {
             return new SumSymbol(firstArgument, secondArgument);
         }

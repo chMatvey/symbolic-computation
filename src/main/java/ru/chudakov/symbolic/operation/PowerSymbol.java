@@ -7,12 +7,12 @@ import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForPower;
+import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisitorForPower;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForPower;
 
 import javax.xml.bind.annotation.*;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @XmlRootElement(name = "power")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,6 +47,11 @@ public class PowerSymbol extends OperationSymbol {
     }
 
     @Override
+    public Symbol pow(Symbol secondArgument) {
+        return secondArgument.callVisitor(new ExponentiationOperationVisitorForPower(this));
+    }
+
+    @Override
     public Symbol callVisitor(OperationVisitor visitor) {
         return visitor.calculatePower(this);
     }
@@ -57,8 +62,14 @@ public class PowerSymbol extends OperationSymbol {
         if (result == 0) {
             PowerSymbol powerSymbol = (PowerSymbol) o;
             result = base.compareTo(powerSymbol.base);
-            if (result == 0)
+            if (result == 0){
                 result = index.compareTo(powerSymbol.index);
+                if (index.getPriority() == 0) {
+                    NumberSymbol first = (NumberSymbol) index;
+                    NumberSymbol second = (NumberSymbol) powerSymbol.index;
+                    result = first.getData().compareTo(second.getData());
+                }
+            }
         }
         return result;
     }

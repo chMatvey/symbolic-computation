@@ -27,10 +27,6 @@ public class PowerSymbol extends OperationSymbol {
         this.index = index;
     }
 
-//    public void incrementIndex() {
-//        index = index.add(new NumberSymbol(1d));
-//    }
-
     @Override
     public int getPriority() {
         return -3;

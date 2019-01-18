@@ -7,8 +7,7 @@ import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.cache.CacheSymbolSingleton;
 import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.operand.VariableSymbol;
-import ru.chudakov.symbolic.operation.FunctionSymbol;
-import ru.chudakov.symbolic.operation.PowerSymbol;
+import ru.chudakov.symbolic.operation.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -65,6 +64,7 @@ public class FunctionsTreeExpression {
         standardFunctions.add("last");
         standardFunctions.add("length");
         standardFunctions.add("while");
+        standardFunctions.add("select");
         standardFunctions.add("if");
         variablesFunction = new ArrayList<>();
         valuesOfVariablesOfFunction = new ArrayList<>();
@@ -251,6 +251,20 @@ public class FunctionsTreeExpression {
                 result = result.getFirst();
             } else if (name.equals("last")) {
                 result = result.getLast();
+            } else if (name.equals("select")) {
+                String args[] = value.split(",");
+                parse(args[0]);
+                result = readSymbolFromStack(true);
+                parse(args[1]);
+                NumberSymbol numberSymbol = (NumberSymbol) readSymbolFromStack(true);
+                int index = numberSymbol.getData().intValue();
+                if (result.getClass() == SumSymbol.class ||
+                result.getClass() == MulSymbol.class) {
+                    Symbol branches[] = ((ArithmeticOperationSymbol) result).toArray();
+                    if (branches.length > index) {
+                        return branches[index];
+                    }
+                }
             }
         } else if (isFunction(expression)) {
             String args[] = expression

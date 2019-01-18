@@ -19,36 +19,36 @@ public class ExponentiationOperationVisitorForFunction implements OperationVisit
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 }

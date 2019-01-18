@@ -10,6 +10,9 @@ import ru.chudakov.symbolic.operation.PowerSymbol;
 import ru.chudakov.symbolic.operation.SumSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExponentiationOperationVisitorForMul implements OperationVisitor {
     private MulSymbol firstArgument;
 
@@ -17,38 +20,46 @@ public class ExponentiationOperationVisitorForMul implements OperationVisitor {
         this.firstArgument = firstArgument;
     }
 
+    private Symbol calculateSymbol(Symbol secondArgument){
+        List<Symbol> list = new ArrayList<>();
+        for (Symbol symbol : firstArgument.getBranches()) {
+            list.add(symbol.pow(secondArgument));
+        }
+        return new MulSymbol(list);
+    }
+
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return null;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return null;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return null;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        return null;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        return null;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return null;
+        return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        return null;
+        return calculateSymbol(secondArgument);
     }
 }

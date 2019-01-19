@@ -1,5 +1,6 @@
 package ru.chudakov.symbolic.operation;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,22 +19,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "function")
 public class FunctionSymbol extends OperationSymbol {
     @XmlAnyElement
     protected Symbol argument;
-
-    protected String expression;
-
-    public FunctionSymbol(Symbol argument) {
-        this.argument = argument;
-    }
-
-    public FunctionSymbol(Symbol argument, String expression) {
-        this.argument = argument;
-        this.expression = expression;
-    }
 
     @Override
     public int getPriority() {
@@ -73,8 +64,8 @@ public class FunctionSymbol extends OperationSymbol {
         return visitor.calculateFunction(this);
     }
 
-//    @Override
-//    public String toString() {
-//        return this.name + "=" + expression;
-//    }
+    @Override
+    public String toString() {
+        return "function(" + argument.toString()  + ")";
+    }
 }

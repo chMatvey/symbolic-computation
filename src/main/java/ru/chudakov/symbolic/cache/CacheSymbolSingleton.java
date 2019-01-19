@@ -1,40 +1,37 @@
 package ru.chudakov.symbolic.cache;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import ru.chudakov.symbolic.Symbol;
 
 import java.util.List;
 import java.util.TreeMap;
 
+@AllArgsConstructor
+@Getter
 public class CacheSymbolSingleton {
     private static CacheSymbolSingleton instance;
-    private TreeMap<Symbol, Symbol> data;
-    private TreeMap<Symbol, List<String>> variableFunction;
 
-    private CacheSymbolSingleton(TreeMap<Symbol, Symbol> data, TreeMap<Symbol, List<String>> variableFunction) {
-        this.data = data;
-        this.variableFunction = variableFunction;
-    }
+    private TreeMap<Symbol, Symbol> variablesAndFunction;
+    private TreeMap<String, String> functions;
+    private TreeMap<String, List<String>> variableFunction;
 
     public static CacheSymbolSingleton getInstance() {
         if (instance == null) {
-            instance = new CacheSymbolSingleton(new TreeMap<>(), new TreeMap<>());
+            instance = new CacheSymbolSingleton(new TreeMap<>(), new TreeMap<>(), new TreeMap<>());
         }
         return instance;
     }
 
-    public void addSymbol(Symbol key, Symbol value) {
-        data.put(key, value);
+    public void addFunction(String name, String expression, Symbol function, Symbol value, List<String> variables) {
+        variablesAndFunction.put(function, value);
+        functions.put(name, expression);
+        variableFunction.put(name, variables);
     }
 
-    public void addVariableFunction(Symbol key, List<String> value) {
-        variableFunction.put(key, value);
-    }
-
-    public TreeMap<Symbol, Symbol> getData() {
-        return data;
-    }
-
-    public TreeMap<Symbol, List<String>> getVariableFunction() {
-        return variableFunction;
+    public void addVariable(String name, Symbol variable, Symbol value) {
+        functions.remove(name);
+        variablesAndFunction.remove(name);
+        variablesAndFunction.put(variable, value);
     }
 }

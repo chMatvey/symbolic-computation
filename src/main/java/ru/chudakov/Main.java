@@ -14,11 +14,15 @@ public class Main {
         SymbolXMLEncoder encoder = new SymbolXMLEncoder();
         FunctionsTreeExpression functionsTreeExpression = new FunctionsTreeExpression();
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String expression = "";
+        String expression;
         while(true) {
             System.out.println("Введите выражение");
             expression = reader.readLine();
             Symbol result = functionsTreeExpression.getSymbol(expression);
+            if (result == null) {
+                System.out.println("операция не поддерживается");
+                continue;
+            }
             System.out.println(result.toString());
             encoder.encodeSymbolToXML(result);
             System.out.println("Выходное выражение записано в файл");

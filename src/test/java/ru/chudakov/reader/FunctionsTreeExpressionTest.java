@@ -10,6 +10,8 @@ public class FunctionsTreeExpressionTest {
     @Test
     public void parse() {
         FunctionsTreeExpression expression = new FunctionsTreeExpression();
-        Symbol result = expression.getSymbol("5+7+8+a+b");
+        expression.parseExpression("select(a+b,1)");
+        expression.parseExpression("sin(a+e,b+c)");
+        expression.parseExpression("a+b*c");
     }
 }

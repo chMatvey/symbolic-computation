@@ -19,12 +19,16 @@ public class ExponentiationOperationVisitorForNumber implements OperationVisitor
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return new PowerSymbol(firstArgument, secondArgument);
+        return new NumberSymbol(
+                Math.pow(firstArgument.getData(), secondArgument.getData())
+        );
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return new PowerSymbol(firstArgument, secondArgument);
+        return new NumberSymbol(
+                Math.pow(firstArgument.getData(), secondArgument.getData())
+        );
     }
 
     @Override

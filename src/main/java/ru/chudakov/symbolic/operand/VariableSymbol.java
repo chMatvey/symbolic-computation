@@ -67,6 +67,6 @@ public class VariableSymbol extends OperandSymbol {
 
     @Override
     public String toString() {
-        return name.toString();
+        return name;
     }
 }

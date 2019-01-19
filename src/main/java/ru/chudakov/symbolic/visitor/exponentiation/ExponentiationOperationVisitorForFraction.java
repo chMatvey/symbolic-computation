@@ -21,12 +21,18 @@ public class ExponentiationOperationVisitorForFraction implements OperationVisit
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return new PowerSymbol(firstArgument, secondArgument);
+        return new FractionSymbol(
+                Math.pow(firstArgument.getNumerator(), secondArgument.getData()),
+                Math.pow(firstArgument.getDenominator(), secondArgument.getData())
+        );
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return new PowerSymbol(firstArgument, secondArgument);
+        return new FractionSymbol(
+                Math.pow(firstArgument.getNumerator(), secondArgument.getData()),
+                Math.pow(firstArgument.getNumerator(), secondArgument.getData())
+        );
     }
 
     @Override

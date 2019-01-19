@@ -19,36 +19,48 @@ public class ExponentiationOperationVisitorForSum implements OperationVisitor {
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
-        return null;
+        if (secondArgument.getData().equals(0d)) {
+            return new NumberSymbol(1d);
+        }
+        int index = secondArgument.getData().intValue();
+        if (index - secondArgument.getData() == 0) {
+            Symbol result = firstArgument;
+            for (int i = 1; i < index; i++) {
+                result = result.mul(firstArgument);
+            }
+            return result;
+        } else {
+            return new PowerSymbol(firstArgument, secondArgument);
+        }
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
-        return null;
+        return calculateNumber(secondArgument);
     }
 
     @Override
     public Symbol calculateVariable(VariableSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateMul(MulSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculatePower(PowerSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 
     @Override
     public Symbol calculateFunction(FunctionSymbol secondArgument) {
-        return null;
+        return new PowerSymbol(firstArgument, secondArgument);
     }
 }

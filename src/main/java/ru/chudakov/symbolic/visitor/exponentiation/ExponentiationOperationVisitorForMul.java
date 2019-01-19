@@ -30,11 +30,17 @@ public class ExponentiationOperationVisitorForMul implements OperationVisitor {
 
     @Override
     public Symbol calculateNumber(NumberSymbol secondArgument) {
+        if (secondArgument.getData().equals(0d)) {
+            return new NumberSymbol(1d);
+        }
         return calculateSymbol(secondArgument);
     }
 
     @Override
     public Symbol calculateFraction(FractionSymbol secondArgument) {
+        if (secondArgument.getData().equals(0d)) {
+            return new NumberSymbol(1d);
+        }
         return calculateSymbol(secondArgument);
     }
 

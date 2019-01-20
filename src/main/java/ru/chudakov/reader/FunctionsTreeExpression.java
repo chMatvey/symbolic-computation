@@ -1,5 +1,6 @@
 package ru.chudakov.reader;
 
+import javafx.util.Pair;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -140,7 +141,7 @@ public class FunctionsTreeExpression {
         while (!stackOperation.empty()) {
             stackReservePolishNotation.push(stackOperation.pop());
         }
-        System.out.println(stackReservePolishNotation);
+        //System.out.println(stackReservePolishNotation);
         Collections.reverse(stackReservePolishNotation);
         return stackReservePolishNotation;
     }
@@ -148,6 +149,7 @@ public class FunctionsTreeExpression {
     private Symbol readSymbolFromStack(@NotNull Stack<String> stackReservePolishNotation,
                                        @NotNull List<String> variablesFunction,
                                        @NotNull List<Symbol> valuesOfVariablesOfFunction,
+                                       @NotNull List<Pair<String, String>> valueFunctionVariables,
                                        boolean useCache) {
         String lastElement;
         Stack<Symbol> arguments = new Stack<>();
@@ -260,7 +262,9 @@ public class FunctionsTreeExpression {
                 if (stack == null || newValuesOfVariablesOfFunction.size() != newVariablesFunction.size()) {
                     return null;
                 }
-                Symbol result = readSymbolFromStack(stack, newVariablesFunction, newValuesOfVariablesOfFunction, true);
+                List<Pair<String, String>> pairs = cache.getValueVariableFunction().get(lastElement);
+                Symbol result = readSymbolFromStack(stack, newVariablesFunction, newValuesOfVariablesOfFunction,
+                        pairs, true);
                 if (result == null) {
                     return null;
                 }
@@ -273,9 +277,28 @@ public class FunctionsTreeExpression {
                     result = new NumberSymbol(Double.parseDouble(lastElement));
                 } else {
                     result = new VariableSymbol(lastElement);
-                }
-                if (cache.getVariablesAndFunction().containsKey(result) && useCache) {
-                    result = cache.getVariablesAndFunction().get(result);
+                    if (cache.getVariablesAndFunction().containsKey(result) && useCache) {
+                        result = cache.getVariablesAndFunction().get(result);
+                    } else if (!valueFunctionVariables.isEmpty()) {
+                        for (Pair<String, String> pair : valueFunctionVariables) {
+                            if (pair.getKey().equals(lastElement)) {
+                                Stack<String> reservePolishNotationStack = parse(pair.getValue());;
+                                if (reservePolishNotationStack == null) {
+                                    return null;
+                                }
+                                result = readSymbolFromStack(
+                                        reservePolishNotationStack,
+                                        variablesFunction,
+                                        valuesOfVariablesOfFunction,
+                                        new ArrayList<>(),
+                                        true
+                                );
+                                break;
+                            }
+                        }
+                    } else {
+                        result = new VariableSymbol(lastElement);
+                    }
                 }
                 arguments.push(result);
             } else {
@@ -289,17 +312,16 @@ public class FunctionsTreeExpression {
         Stack<String> stackReservePolishNotation;
         CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
         String parts[] = expression.split("=");
+        for (int i = 2; i < parts.length; i++) {
+            parts[1] = parts[1] + "=" + parts[i];
+        }
+        String functionValue = parts[1];
         String name;
         if (isFunction(parts[0])) {
             name = parts[0].substring(0, parts[0].indexOf("("));
         } else {
             name = parts[0];
         }
-//        if (cache.getVariablesAndFunction().containsKey(new VariableSymbol(name))) {
-//            cache.getVariablesAndFunction().remove(new VariableSymbol(name));
-//            cache.getFunctions().remove(name);
-//            cache.getVariableFunction().remove(name);
-//        }
         if (NumberUtils.isNumber(name) || !isNumberOrVariable(name)) {
             return null;
         }
@@ -307,7 +329,8 @@ public class FunctionsTreeExpression {
         if (stackReservePolishNotation == null) {
             return null;
         }
-        Symbol key = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), false);
+        Symbol key = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), false);
         Symbol value;
         if (isFunction(parts[0])) {
             String args[] = parts[0]
@@ -317,25 +340,41 @@ public class FunctionsTreeExpression {
                     .split(",");
             Set<String> set = new TreeSet<>(Arrays.asList(args));
             List<String> list = new ArrayList<>(set);
-            if (list.contains(name)) {
-                return null;
+//            if (list.contains(name)) {
+//                return null;
+//            }
+            List<Pair<String, String>> listValueVariableFunction = new ArrayList<>();
+            if (functionValue.contains(";")) {
+                String functionValueAndVariable[] = parts[1].split(";");
+                functionValue = functionValueAndVariable[0];
+                for (int i = 1; i < functionValueAndVariable.length; i++) {
+                    String nameAndValueVariableFunction[] = functionValueAndVariable[i].split("=");
+                    String nameFunctionVariable = nameAndValueVariableFunction[0];
+                    String valueFunctionVariable = nameAndValueVariableFunction[1];
+                    listValueVariableFunction.add(new Pair<>(
+                            nameFunctionVariable,
+                            valueFunctionVariable
+                    ));
+                }
             }
-            stackReservePolishNotation = parse(parts[1]);
+            stackReservePolishNotation = parse(functionValue);
             if (stackReservePolishNotation == null) {
                 return null;
             }
-            value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), true);
+            value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(),
+                    new ArrayList<>(), true);
             value = new FunctionSymbol(value);
-            cache.addFunction(name, parts[1], key, value, list);
+            cache.addFunction(name, functionValue, key, value, list, listValueVariableFunction);
         } else {
 //            if (parts[1].contains(name)) {
 //                return null;
 //            }
-            stackReservePolishNotation = parse(parts[1]);
+            stackReservePolishNotation = parse(functionValue);
             if (stackReservePolishNotation == null) {
                 return null;
             }
-            value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), true);
+            value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(),
+                    new ArrayList<>(), true);
             cache.addVariable(name, key, value);
         }
         return value;
@@ -352,7 +391,8 @@ public class FunctionsTreeExpression {
             if (stackReservePolishNotation == null) {
                 return null;
             }
-            return readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), true);
+            return readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(),
+                    new ArrayList<>(), true);
         }
     }
 

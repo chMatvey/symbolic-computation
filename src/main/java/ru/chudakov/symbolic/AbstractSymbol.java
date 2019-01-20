@@ -33,4 +33,9 @@ public abstract class AbstractSymbol implements Symbol {
     public int length() {
         return 1;
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().toString();
+    }
 }

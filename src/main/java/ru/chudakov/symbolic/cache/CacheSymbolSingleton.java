@@ -7,7 +7,6 @@ import ru.chudakov.symbolic.Symbol;
 import java.util.List;
 import java.util.TreeMap;
 
-@AllArgsConstructor
 @Getter
 public class CacheSymbolSingleton {
     private static CacheSymbolSingleton instance;
@@ -15,6 +14,15 @@ public class CacheSymbolSingleton {
     private TreeMap<Symbol, Symbol> variablesAndFunction;
     private TreeMap<String, String> functions;
     private TreeMap<String, List<String>> variableFunction;
+    private String expression;
+
+    private CacheSymbolSingleton(TreeMap<Symbol, Symbol> variablesAndFunction,
+                                 TreeMap<String, String> functions,
+                                 TreeMap<String, List<String>> variableFunction) {
+        this.variablesAndFunction = variablesAndFunction;
+        this.functions = functions;
+        this.variableFunction = variableFunction;
+    }
 
     public static CacheSymbolSingleton getInstance() {
         if (instance == null) {
@@ -31,7 +39,11 @@ public class CacheSymbolSingleton {
 
     public void addVariable(String name, Symbol variable, Symbol value) {
         functions.remove(name);
-        variablesAndFunction.remove(name);
+        variablesAndFunction.remove(variable);
         variablesAndFunction.put(variable, value);
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 }

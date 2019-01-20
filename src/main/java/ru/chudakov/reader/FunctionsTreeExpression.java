@@ -19,11 +19,6 @@ public class FunctionsTreeExpression {
     private final String closeBracket = ")";
     private List<String> standardFunctions;
 
-    //private List<String> variablesFunction;
-    //private List<Symbol> valuesOfVariablesOfFunction;
-    //private Stack<String> stackOperation = new Stack<>();
-    //private Stack<String> stackReservePolishNotation = new Stack<>();
-
     public FunctionsTreeExpression() {
         operators = new ArrayList<>();
         operators.add("+");
@@ -38,6 +33,8 @@ public class FunctionsTreeExpression {
         standardFunctions.add("select");
         standardFunctions.add("while");
         standardFunctions.add("if");
+        standardFunctions.add("delayed");
+        standardFunctions.add("less");
         standardFunctions.add("sin");
         standardFunctions.add("cos");
         //variablesFunction = new ArrayList<>();
@@ -62,7 +59,7 @@ public class FunctionsTreeExpression {
 
     private boolean isNumberOrVariable(@NotNull String token) {
         Pattern pattern = Pattern.compile("\\w+");
-        return pattern.matcher(token).matches();
+        return pattern.matcher(token).matches() || NumberUtils.isNumber(token);
     }
 
     private byte getPrecedence(@NotNull String token) {
@@ -97,7 +94,8 @@ public class FunctionsTreeExpression {
         expression = expression
                 .replace(" ", "")
                 .replace(",-", ",0-")
-                .replace("(-", "(0-");
+                .replace("(-", "(0-")
+                .replace("_", ".");
         if (expression.charAt(0) == '-') {
             expression = "0" + expression;
         }
@@ -149,26 +147,14 @@ public class FunctionsTreeExpression {
 
     private Symbol readSymbolFromStack(@NotNull Stack<String> stackReservePolishNotation,
                                        @NotNull List<String> variablesFunction,
-                                       @NotNull List<Symbol> valuesOfVariablesOfFunction) {
+                                       @NotNull List<Symbol> valuesOfVariablesOfFunction,
+                                       boolean useCache) {
         String lastElement;
         Stack<Symbol> arguments = new Stack<>();
         CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
         while (!stackReservePolishNotation.empty()) {
             lastElement = stackReservePolishNotation.pop();
-            if (isNumberOrVariable(lastElement) && !isStandardFunction(lastElement) && !isUserFunction(lastElement)) {
-                Symbol result;
-                if (variablesFunction.contains(lastElement)) {
-                    result = valuesOfVariablesOfFunction.get(variablesFunction.indexOf(lastElement));
-                } else if (NumberUtils.isNumber(lastElement)) {
-                    result = new NumberSymbol(Double.parseDouble(lastElement));
-                } else {
-                    result = new VariableSymbol(lastElement);
-                }
-                if (cache.getVariablesAndFunction().containsKey(result)) {
-                    result = cache.getVariablesAndFunction().get(result);
-                }
-                arguments.push(result);
-            } else if (isOperator(lastElement)) {
+            if (isOperator(lastElement)) {
                 Symbol result;
                 if (arguments.empty()) {
                     return null;
@@ -217,10 +203,50 @@ public class FunctionsTreeExpression {
                     } else {
                         return null;
                     }
-                } else {
-                    return null;
+                } else if (lastElement.equals("delayed")) {
+                    arguments.pop();
+                    Symbol functionName = arguments.pop();
+                    if (functionName.getClass() != VariableSymbol.class) {
+                        return null;
+                    }
+                    String expression = cache.getExpression();
+                    expression = expression.substring(expression.indexOf("("));
+                    String parts[] = expression.split(",");
+                    String name = parts[0].substring(1);
+                    String value = parts[1].substring(0, parts[1].length() - 1);
+                    arguments.push(getFunctionOrVariable(name + "=" + value));
+                } else if (lastElement.equals("less")) {
+                    Symbol right = arguments.pop();
+                    if (arguments.empty()) {
+                        return null;
+                    }
+                    Symbol left = arguments.pop();
+                    if (left.getClass() != NumberSymbol.class || right.getClass() != NumberSymbol.class) {
+                        return null;
+                    }
+                    NumberSymbol difference = (NumberSymbol) left.add(right.mul(new NumberSymbol(-1d)));
+                    if (difference.getData() < 0) {
+                        arguments.push(new NumberSymbol(1d));
+                    } else {
+                        arguments.push(new NumberSymbol(0d));
+                    }
+                } else if (lastElement.equals("if")) {
+                    if (arguments.size() < 3) {
+                        return null;
+                    }
+                    Symbol elseBody = arguments.pop();
+                    Symbol body = arguments.pop();
+                    if (arguments.lastElement().getClass() != NumberSymbol.class) {
+                        return null;
+                    }
+                    NumberSymbol condition = (NumberSymbol) arguments.pop();
+                    if (condition.getData() == 1d) {
+                        arguments.push(body);
+                    } else {
+                        arguments.push(elseBody);
+                    }
                 }
-            } else if (isUserFunction(lastElement)) {
+            } else if (isUserFunction(lastElement) && useCache) {
                 String functionExpression = cache.getFunctions().get(lastElement);
                 List<String> newVariablesFunction = cache.getVariableFunction().get(lastElement);
                 List<Symbol> newValuesOfVariablesOfFunction = new ArrayList<>();
@@ -234,9 +260,22 @@ public class FunctionsTreeExpression {
                 if (stack == null || newValuesOfVariablesOfFunction.size() != newVariablesFunction.size()) {
                     return null;
                 }
-                Symbol result = readSymbolFromStack(stack, newVariablesFunction, newValuesOfVariablesOfFunction);
+                Symbol result = readSymbolFromStack(stack, newVariablesFunction, newValuesOfVariablesOfFunction, true);
                 if (result == null) {
                     return null;
+                }
+                arguments.push(result);
+            } else if (isNumberOrVariable(lastElement)) {
+                Symbol result;
+                if (variablesFunction.contains(lastElement)) {
+                    result = valuesOfVariablesOfFunction.get(variablesFunction.indexOf(lastElement));
+                } else if (NumberUtils.isNumber(lastElement)) {
+                    result = new NumberSymbol(Double.parseDouble(lastElement));
+                } else {
+                    result = new VariableSymbol(lastElement);
+                }
+                if (cache.getVariablesAndFunction().containsKey(result) && useCache) {
+                    result = cache.getVariablesAndFunction().get(result);
                 }
                 arguments.push(result);
             } else {
@@ -246,66 +285,74 @@ public class FunctionsTreeExpression {
         return arguments.pop();
     }
 
-    public Symbol getSymbol(String expression) {
+    private Symbol getFunctionOrVariable(String expression) {
         Stack<String> stackReservePolishNotation;
-        if (isNewFunctionOrExpression(expression)) {
-            CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
-            String parts[] = expression.split("=");
-            String name;
-            if (isFunction(parts[0])) {
-                name = parts[0].substring(0, parts[0].indexOf("("));
-            } else {
-                name = parts[0];
-            }
-            if (cache.getVariablesAndFunction().containsKey(new VariableSymbol(name))) {
-                cache.getVariablesAndFunction().remove(new VariableSymbol(name));
-                cache.getFunctions().remove(name);
-                cache.getVariableFunction().remove(name);
-            }
-            if (NumberUtils.isNumber(name) || !isNumberOrVariable(name)) {
+        CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+        String parts[] = expression.split("=");
+        String name;
+        if (isFunction(parts[0])) {
+            name = parts[0].substring(0, parts[0].indexOf("("));
+        } else {
+            name = parts[0];
+        }
+//        if (cache.getVariablesAndFunction().containsKey(new VariableSymbol(name))) {
+//            cache.getVariablesAndFunction().remove(new VariableSymbol(name));
+//            cache.getFunctions().remove(name);
+//            cache.getVariableFunction().remove(name);
+//        }
+        if (NumberUtils.isNumber(name) || !isNumberOrVariable(name)) {
+            return null;
+        }
+        stackReservePolishNotation = parse(name);
+        if (stackReservePolishNotation == null) {
+            return null;
+        }
+        Symbol key = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), false);
+        Symbol value;
+        if (isFunction(parts[0])) {
+            String args[] = parts[0]
+                    .substring(parts[0].indexOf("("))
+                    .replace("(", "")
+                    .replace(")", "")
+                    .split(",");
+            Set<String> set = new TreeSet<>(Arrays.asList(args));
+            List<String> list = new ArrayList<>(set);
+            if (list.contains(name)) {
                 return null;
             }
-            stackReservePolishNotation = parse(name);
+            stackReservePolishNotation = parse(parts[1]);
             if (stackReservePolishNotation == null) {
                 return null;
             }
-            Symbol key = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>());
-            Symbol value;
-            if (isFunction(parts[0])) {
-                String args[] = parts[0]
-                        .substring(parts[0].indexOf("("))
-                        .replace("(", "")
-                        .replace(")", "")
-                        .split(",");
-                List<String> list = new ArrayList<>(Arrays.asList(args));
-                if (list.contains(name)) {
-                    return null;
-                }
-                stackReservePolishNotation = parse(parts[1]);
-                if (stackReservePolishNotation == null) {
-                    return null;
-                }
-                value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>());
-                value = new FunctionSymbol(value);
-                cache.addFunction(name, parts[1], key, value, list);
-            } else {
-                if (parts[1].contains(name)) {
-                    return null;
-                }
-                stackReservePolishNotation = parse(parts[1]);
-                if (stackReservePolishNotation == null) {
-                    return null;
-                }
-                value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>());
-                cache.addVariable(name, key, value);
+            value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), true);
+            value = new FunctionSymbol(value);
+            cache.addFunction(name, parts[1], key, value, list);
+        } else {
+//            if (parts[1].contains(name)) {
+//                return null;
+//            }
+            stackReservePolishNotation = parse(parts[1]);
+            if (stackReservePolishNotation == null) {
+                return null;
             }
-            return value;
+            value = readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), true);
+            cache.addVariable(name, key, value);
+        }
+        return value;
+    }
+
+    public Symbol getSymbol(String expression) {
+        Stack<String> stackReservePolishNotation;
+        CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
+        cache.setExpression(expression);
+        if (isNewFunctionOrExpression(expression)) {
+            return getFunctionOrVariable(expression);
         } else {
             stackReservePolishNotation = parse(expression);
             if (stackReservePolishNotation == null) {
                 return null;
             }
-            return readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>());
+            return readSymbolFromStack(stackReservePolishNotation, new ArrayList<>(), new ArrayList<>(), true);
         }
     }
 

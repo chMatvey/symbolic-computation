@@ -11,7 +11,7 @@ public class StringTest {
     @Test
     public void split(){
         Pattern pattern = Pattern.compile("\\w+");
-        Matcher matcher = pattern.matcher("1242");
+        Matcher matcher = pattern.matcher("0_5");
         System.out.println(matcher.matches());
     }
 }

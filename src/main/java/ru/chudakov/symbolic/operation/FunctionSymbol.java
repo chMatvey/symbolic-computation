@@ -64,8 +64,8 @@ public class FunctionSymbol extends OperationSymbol {
         return visitor.calculateFunction(this);
     }
 
-    @Override
-    public String toString() {
-        return "function(" + argument.toString()  + ")";
-    }
+//    @Override
+//    public String toString() {
+//        return "function(" + argument.toString()  + ")";
+//    }
 }

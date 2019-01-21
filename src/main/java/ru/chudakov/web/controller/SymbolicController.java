@@ -20,9 +20,19 @@ public class SymbolicController {
 
     @PostMapping("/getPoints")
     public List<List<Double>> getPoints(@RequestBody String expression,
-                                                @RequestParam Double leftBorder,
-                                                @RequestParam Double rightBorder,
-                                                @RequestParam int countSplits) {
+                                        @RequestParam Double leftBorder,
+                                        @RequestParam Double rightBorder,
+                                        @RequestParam int countSplits) {
+        expression = expression.substring(0, expression.length() - 1);
+        String parts[] = expression.split("&");
+        expression = parts[parts.length - 1];
+        expression = expression.replace("%2F", "/");
+        expression = expression.replace("%5E", "^");
         return symbolicService.getPoints(expression, leftBorder, rightBorder, countSplits);
+    }
+
+    @PostMapping("/getLol")
+    public String getLol(@RequestBody String lol) {
+        return lol;
     }
 }

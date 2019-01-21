@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 public class StringTest {
     @Test
     public void split(){
-        Pattern pattern = Pattern.compile("\\w+");
-        Matcher matcher = pattern.matcher("0_5");
+        Pattern pattern = Pattern.compile("[\\w|.]+");
+        Matcher matcher = pattern.matcher("0.5");
         System.out.println(matcher.matches());
     }
 }

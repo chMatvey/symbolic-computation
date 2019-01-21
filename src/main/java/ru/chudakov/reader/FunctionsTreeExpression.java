@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.cache.CacheSymbolSingleton;
+import ru.chudakov.symbolic.operand.FractionSymbol;
 import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.operand.VariableSymbol;
 import ru.chudakov.symbolic.operation.*;
@@ -37,7 +38,6 @@ public class FunctionsTreeExpression {
         standardFunctions.add("delayed");
         standardFunctions.add("less");
         standardFunctions.add("sin");
-        standardFunctions.add("cos");
         //variablesFunction = new ArrayList<>();
         //valuesOfVariablesOfFunction = new ArrayList<>();
     }
@@ -59,7 +59,7 @@ public class FunctionsTreeExpression {
     }
 
     private boolean isNumberOrVariable(@NotNull String token) {
-        Pattern pattern = Pattern.compile("\\w+");
+        Pattern pattern = Pattern.compile("[\\w|.]+");
         return pattern.matcher(token).matches() || NumberUtils.isNumber(token);
     }
 
@@ -260,6 +260,18 @@ public class FunctionsTreeExpression {
                         arguments.push(body);
                         condition = ((NumberSymbol) arguments.pop()).getData().intValue();
                     }
+                } else if (lastElement.equals("sin")) {
+                    if (arguments.empty()) {
+                        return null;
+                    }
+                    Symbol argument = arguments.pop();
+                    if (argument.getClass() == NumberSymbol.class || argument.getClass() == FractionSymbol.class) {
+                        arguments.push(
+                                new NumberSymbol(Math.sin(((NumberSymbol) argument).getData()))
+                        );
+                    } else {
+                        arguments.push(new SinFunctionSymbol(argument));
+                    }
                 } else {
                     return null;
                 }
@@ -297,7 +309,8 @@ public class FunctionsTreeExpression {
                     } else if (!valueFunctionVariables.isEmpty()) {
                         for (Pair<String, String> pair : valueFunctionVariables) {
                             if (pair.getKey().equals(lastElement)) {
-                                Stack<String> reservePolishNotationStack = parse(pair.getValue());;
+                                Stack<String> reservePolishNotationStack = parse(pair.getValue());
+                                ;
                                 if (reservePolishNotationStack == null) {
                                     return null;
                                 }

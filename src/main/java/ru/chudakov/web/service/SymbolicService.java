@@ -19,6 +19,7 @@ import java.util.TreeSet;
 @Service
 public class SymbolicService {
     private FunctionsTreeExpression functionsTreeExpression;
+    private final static int withBorder = 1;
 
     @PostConstruct
     public void init() {
@@ -37,7 +38,7 @@ public class SymbolicService {
         TreeMap<VariableSymbol, NumberSymbol> values = new TreeMap<>();
         values.put(variable, new NumberSymbol(leftBorder));
         List<List<Double>> result = new ArrayList<>();
-        for (int i = 0; i < countSplits; i++) {
+        for (int i = 0; i < countSplits + withBorder; i++) {
             List<Double> pair = new ArrayList<>();
             pair.add(leftBorder);
             Symbol value = equation.putValue(values);
@@ -55,7 +56,7 @@ public class SymbolicService {
         }
         List<Double> lastPair = new ArrayList<>();
         lastPair.add(rightBorder);
-        lastPair.add(result.remove(countSplits - 1).get(1));
+        lastPair.add(result.remove(countSplits + withBorder - 1).get(1));
         result.add(lastPair);
         return result;
     }

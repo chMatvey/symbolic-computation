@@ -6,24 +6,43 @@
 </head>
 <body>
 <div>
+    <br><br><br>
+    <label>Введите уравнение</label>
+    <input type="text" id="expression" value="x+2"/><br>
+    <label>Введите левую границу</label>
+    <input type="text" id="leftBorder" value="0"/><br>
+    <label>Введите правую границу</label>
+    <input type="text" id="rightBorder" value="10"/><br>
+    <label>Введите количество разбиений</label>
+    <input type="text" id="countSplits" value="100"/>
+    <button onclick=drawGraph()>Результат</button>
     <div id="container" style="width: 500px; height: 400px"></div>
 </div>
 <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
-    const data = [
-        [-3, -3],
-        [-2, -2],
-        [-1, -1],
-        [0, 0],
-        [1, 1],
-        [2, 2],
-        [3, 3],
-    ];
-    chart = anychart.line();
-    const series = chart.line(data);
-    chart.container("container");
-    chart.draw();
+    function drawGraph() {
+        let url = "http://localhost:8080/getPoints?leftBorder=";
+        url = url + document.getElementById("leftBorder").value + "&rightBorder=";
+        url = url + document.getElementById("rightBorder").value + "&countSplits=";
+        url = url + document.getElementById("countSplits").value;
+        const expression = document.getElementById("expression").value;
+        console.log(url);
+        console.log(expression);
+        axios.post(url, expression, "Content-type': 'application/json; charset=utf-8")
+            .then(response => {
+                document.getElementById("container");
+                console.log(response.data);
+                const points = response.data;
+                chart = anychart.line();
+                const series = chart.line(points);
+                chart.container("container");
+                chart.draw();
+            })
+            .catch(error => {
+                alert(error)
+            });
+    }
 </script>
 </body>
 </html>

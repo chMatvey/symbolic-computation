@@ -1,6 +1,10 @@
 package ru.chudakov.symbolic;
 
+import ru.chudakov.symbolic.operand.NumberSymbol;
+import ru.chudakov.symbolic.operand.VariableSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
+
+import java.util.TreeMap;
 
 public interface Symbol extends Comparable<Symbol> {
     public int getPriority();
@@ -18,4 +22,6 @@ public interface Symbol extends Comparable<Symbol> {
     public Symbol getLast();
 
     public int length();
+
+    public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values);
 }

@@ -1,11 +1,13 @@
 package ru.chudakov.symbolic.operation;
 
+import javafx.util.Pair;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.operand.NumberSymbol;
+import ru.chudakov.symbolic.operand.VariableSymbol;
 
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
@@ -70,6 +72,8 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         }
     }
 
+    protected abstract Symbol getInstance(List<Symbol> branches);
+
     @Override
     public int getPriority() {
         return -2;
@@ -93,6 +97,19 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
 //        }
 //        return result;
         return branches.size();
+    }
+
+    @Override
+    public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values) {
+        List<Symbol> newBranches = new ArrayList<>();
+        for (Symbol branch : branches) {
+            newBranches.add(branch.putValue(values));
+        }
+        Symbol result = new NumberSymbol(0d);
+        for (Symbol branch : newBranches) {
+            result = result.add(branch);
+        }
+        return result;
     }
 
     @Override

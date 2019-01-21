@@ -11,6 +11,7 @@ import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisito
 
 import javax.xml.bind.annotation.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 @Getter
@@ -60,5 +61,10 @@ public class SumSymbol extends ArithmeticOperationSymbol {
     @Override
     public Symbol callVisitor(OperationVisitor visitor) {
         return visitor.calculateSum(this);
+    }
+
+    @Override
+    protected Symbol getInstance(List<Symbol> branches) {
+        return new SumSymbol(branches);
     }
 }

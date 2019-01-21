@@ -8,6 +8,7 @@ import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisito
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForNumber;
 
 import javax.xml.bind.annotation.*;
+import java.util.TreeMap;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,5 +41,10 @@ public class NumberSymbol extends OperandSymbol {
     @Override
     public String toString() {
         return data.toString();
+    }
+
+    @Override
+    public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values) {
+        return this;
     }
 }

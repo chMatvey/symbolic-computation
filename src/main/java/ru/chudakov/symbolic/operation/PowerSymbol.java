@@ -5,12 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.operand.NumberSymbol;
+import ru.chudakov.symbolic.operand.VariableSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForPower;
 import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisitorForPower;
 import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisitorForPower;
 
 import javax.xml.bind.annotation.*;
+import java.util.TreeMap;
 
 @Getter
 @NoArgsConstructor
@@ -50,6 +52,11 @@ public class PowerSymbol extends OperationSymbol {
     @Override
     public Symbol callVisitor(OperationVisitor visitor) {
         return visitor.calculatePower(this);
+    }
+
+    @Override
+    public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values) {
+        return base.putValue(values).pow(index.putValue(values));
     }
 
     @Override

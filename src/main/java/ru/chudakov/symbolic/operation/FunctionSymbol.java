@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
+import ru.chudakov.symbolic.operand.NumberSymbol;
+import ru.chudakov.symbolic.operand.VariableSymbol;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForFunction;
 import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisitorForFunction;
@@ -15,6 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
+import java.util.TreeMap;
 
 @Getter
 @Setter
@@ -64,8 +67,8 @@ public class FunctionSymbol extends OperationSymbol {
         return visitor.calculateFunction(this);
     }
 
-//    @Override
-//    public String toString() {
-//        return "function(" + argument.toString()  + ")";
-//    }
+    @Override
+    public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values) {
+        return new FunctionSymbol(argument.putValue(values));
+    }
 }

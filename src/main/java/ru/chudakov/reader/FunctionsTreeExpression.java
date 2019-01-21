@@ -247,6 +247,21 @@ public class FunctionsTreeExpression {
                     } else {
                         arguments.push(elseBody);
                     }
+                } else if (lastElement.equals("while")) {
+                    if (arguments.size() < 2) {
+                        return null;
+                    }
+                    Symbol body = arguments.pop();
+                    if (arguments.lastElement().getClass() != NumberSymbol.class) {
+                        return null;
+                    }
+                    int condition = ((NumberSymbol) arguments.pop()).getData().intValue();
+                    while (condition == 1) {
+                        arguments.push(body);
+                        condition = ((NumberSymbol) arguments.pop()).getData().intValue();
+                    }
+                } else {
+                    return null;
                 }
             } else if (isUserFunction(lastElement) && useCache) {
                 String functionExpression = cache.getFunctions().get(lastElement);
@@ -396,7 +411,20 @@ public class FunctionsTreeExpression {
         }
     }
 
-    public void parseExpression(String expression) {
-        parse(expression);
+    public TreeSet<VariableSymbol> getVariables(String expression) {
+        Stack<String> reservePolishNotationStack = parse(expression);
+        if (reservePolishNotationStack == null) {
+            return null;
+        }
+        String lastElement;
+        TreeSet<VariableSymbol> result = new TreeSet<>();
+        while (!reservePolishNotationStack.empty()) {
+            lastElement = reservePolishNotationStack.lastElement();
+            if (isNumberOrVariable(lastElement) && !NumberUtils.isNumber(lastElement)) {
+                result.add(new VariableSymbol(lastElement));
+            }
+            reservePolishNotationStack.pop();
+        }
+        return result;
     }
 }

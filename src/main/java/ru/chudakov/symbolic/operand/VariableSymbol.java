@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.TreeMap;
 
 @Getter
 @Setter
@@ -63,6 +64,15 @@ public class VariableSymbol extends OperandSymbol {
     @Override
     public Symbol callVisitor(OperationVisitor visitor) {
         return visitor.calculateVariable(this);
+    }
+
+    @Override
+    public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values) {
+        if (values.containsKey(this)){
+            return values.get(this);
+        } else {
+            return this;
+        }
     }
 
     @Override

@@ -12,6 +12,7 @@ import ru.chudakov.symbolic.visitor.multiplication.MultiplicationOperationVisito
 
 import javax.xml.bind.annotation.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 @Getter
@@ -86,5 +87,10 @@ public class MulSymbol extends ArithmeticOperationSymbol {
             result = branches.first().compareTo(o);
         }
         return result;
+    }
+
+    @Override
+    protected Symbol getInstance(List<Symbol> branches) {
+        return new MulSymbol(branches);
     }
 }

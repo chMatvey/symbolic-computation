@@ -24,8 +24,8 @@ public class Main {
                 continue;
             }
             System.out.println(result.toString());
-            encoder.encodeSymbolToXML(result);
-            System.out.println("Выходное выражение записано в файл");
+            //encoder.encodeSymbolToXML(result);
+            //System.out.println("Выходное выражение записано в файл");
         }
     }
 }

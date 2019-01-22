@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.cache.CacheSymbolSingleton;
-import ru.chudakov.symbolic.operand.FractionSymbol;
-import ru.chudakov.symbolic.operand.NumberSymbol;
-import ru.chudakov.symbolic.operand.VariableSymbol;
+import ru.chudakov.symbolic.operand.*;
 import ru.chudakov.symbolic.operation.*;
 
 import java.util.*;
@@ -38,6 +36,7 @@ public class FunctionsTreeExpression {
         standardFunctions.add("delayed");
         standardFunctions.add("less");
         standardFunctions.add("sin");
+        standardFunctions.add("getPoints");
         //variablesFunction = new ArrayList<>();
         //valuesOfVariablesOfFunction = new ArrayList<>();
     }
@@ -101,7 +100,9 @@ public class FunctionsTreeExpression {
             expression = "0" + expression;
         }
         StringTokenizer stringTokenizer = new StringTokenizer(
-                expression, operators + separator + openBracket + closeBracket, true
+                expression,
+                operators + separator + openBracket + closeBracket + "[" + "]" + ";",
+                true
         );
         String token;
         while (stringTokenizer.hasMoreTokens()) {
@@ -133,6 +134,15 @@ public class FunctionsTreeExpression {
                 )) {
                     stackReservePolishNotation.push(stackOperation.pop());
                 }
+            } else if (token.equals("[")) {
+                stackReservePolishNotation.push(token);
+            } else if (token.equals("]")) {
+                stackReservePolishNotation.push(token);
+            } else if (token.contains(";")) {
+                while (!stackOperation.empty()) {
+                    stackReservePolishNotation.push(stackOperation.pop());
+                }
+                stackReservePolishNotation.push(";");
             } else {
                 stackReservePolishNotation.clear();
                 return null;
@@ -141,7 +151,7 @@ public class FunctionsTreeExpression {
         while (!stackOperation.empty()) {
             stackReservePolishNotation.push(stackOperation.pop());
         }
-        //System.out.println(stackReservePolishNotation);
+        System.out.println(stackReservePolishNotation);
         Collections.reverse(stackReservePolishNotation);
         return stackReservePolishNotation;
     }
@@ -153,6 +163,7 @@ public class FunctionsTreeExpression {
                                        boolean useCache) {
         String lastElement;
         Stack<Symbol> arguments = new Stack<>();
+        List<Symbol> listForListSymbol = new ArrayList<>();
         CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
         while (!stackReservePolishNotation.empty()) {
             lastElement = stackReservePolishNotation.pop();
@@ -272,6 +283,42 @@ public class FunctionsTreeExpression {
                     } else {
                         arguments.push(new SinFunctionSymbol(argument));
                     }
+                } else if (lastElement.equals("getPoints")) {
+                    Symbol countSplitsSymbol = arguments.pop();
+                    Symbol rightBorderSymbol = arguments.pop();
+                    Symbol leftBorderSymbol = arguments.pop();
+                    Symbol expressionSymbol = arguments.pop();
+                    if (countSplitsSymbol.getClass() != NumberSymbol.class ||
+                            rightBorderSymbol.getClass() != NumberSymbol.class ||
+                            leftBorderSymbol.getClass() != NumberSymbol.class) {
+                        return null;
+                    }
+                    int countSplits = ((NumberSymbol) countSplitsSymbol).getData().intValue();
+                    double leftBorder = ((NumberSymbol) leftBorderSymbol).getData();
+                    double rightBorder = ((NumberSymbol) rightBorderSymbol).getData();
+                    double delta = (rightBorder - leftBorder) / countSplits;
+                    List<Symbol> listForCreateListSymbol = new ArrayList<>();
+                    TreeMap<VariableSymbol, NumberSymbol> values = new TreeMap<>();
+                    Symbol symbol = getVariable(expressionSymbol);
+                    if (symbol == null || symbol.getClass() != VariableSymbol.class) {
+                        return null;
+                    }
+                    VariableSymbol variableSymbol = (VariableSymbol) symbol;
+                    values.put(variableSymbol, new NumberSymbol(leftBorder));
+                    List<Symbol> pair;
+                    Symbol valueUserFunction;
+                    for (int i = 0; i < countSplits; i++) {
+                        pair = new ArrayList<>();
+                        valueUserFunction = expressionSymbol.putValue(values);
+                        if (valueUserFunction.getClass() != NumberSymbol.class) {
+                            return null;
+                        }
+                        pair.add(new NumberSymbol(leftBorder));
+                        pair.add(valueUserFunction);
+                        leftBorder += delta;
+                        listForCreateListSymbol.add(new ListSymbol(pair));
+                    }
+                    return new ListSymbol(listForCreateListSymbol);
                 } else {
                     return null;
                 }
@@ -329,11 +376,66 @@ public class FunctionsTreeExpression {
                     }
                 }
                 arguments.push(result);
+            } else if (lastElement.equals("[")) {
+                arguments.push(new EmptySymbol());
+            } else if (lastElement.equals("]")) {
+                List<Symbol> list = new ArrayList<>();
+                while (arguments.lastElement().getClass() != EmptySymbol.class) {
+                    list.add(arguments.pop());
+                }
+                arguments.pop();
+                arguments.push(new ListSymbol(list));
+            } else if (lastElement.equals(";")) {
+                listForListSymbol.add(arguments.pop());
             } else {
                 return null;
             }
         }
-        return arguments.pop();
+        if (listForListSymbol.isEmpty()) {
+            return arguments.pop();
+        } else {
+            listForListSymbol.add(arguments.pop());
+            return new ListSymbol(listForListSymbol);
+        }
+    }
+
+    private VariableSymbol getVariable(Symbol symbol) {
+        if (symbol.getClass() == NumberSymbol.class) {
+            return null;
+        } else if (symbol.getClass() == VariableSymbol.class) {
+            return (VariableSymbol) symbol;
+        } else if (symbol.getClass() == SumSymbol.class || symbol.getClass() == MulSymbol.class) {
+            Symbol variable = new EmptySymbol();
+            ArithmeticOperationSymbol sumSymbol = (ArithmeticOperationSymbol) symbol;
+            for (Symbol branch : sumSymbol.getBranches()) {
+                Symbol result = getVariable(branch);
+                if (result == null) {
+                    continue;
+                } else if (result.getClass() == VariableSymbol.class) {
+                    return (VariableSymbol) result;
+                }
+            }
+            return null;
+        } else if (symbol.getClass() == PowerSymbol.class) {
+            PowerSymbol powerSymbol = (PowerSymbol) symbol;
+            Symbol result = getVariable(powerSymbol.getBase());
+            if (result == null) {
+                result = new EmptySymbol();
+            }
+            if (result.getClass() != VariableSymbol.class) {
+                result = getVariable(powerSymbol.getIndex());
+            }
+            if (result == null) {
+                result = new EmptySymbol();
+            }
+            if (result.getClass() != VariableSymbol.class) {
+                return null;
+            } else {
+                return (VariableSymbol) result;
+            }
+        } else {
+            return null;
+        }
     }
 
     private Symbol getFunctionOrVariable(String expression) {

@@ -318,7 +318,7 @@ public class FunctionsTreeExpression {
                                         reservePolishNotationStack,
                                         variablesFunction,
                                         valuesOfVariablesOfFunction,
-                                        new ArrayList<>(),
+                                        valueFunctionVariables,
                                         true
                                 );
                                 break;

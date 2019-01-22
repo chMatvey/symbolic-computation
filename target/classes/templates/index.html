@@ -11,10 +11,10 @@
     <input type="text" id="expression" value="x+2"/><br>
     <label>Введите левую границу</label>
     <input type="text" id="leftBorder" value="0"/><br>
-    <label>Введите правую грнаицу</label>
+    <label>Введите правую границу</label>
     <input type="text" id="rightBorder" value="10"/><br>
-    <label>Введите количество разбиений</label>
-    <input type="text" id="countSplits" value="100"/>
+    <label>Введите шаг</label>
+    <input type="text" id="delta" value="0.1"/>
     <button onclick=drawGraph()>Результат</button>
     <div id="container" style="width: 500px; height: 400px"></div>
 </div>
@@ -24,8 +24,8 @@
     function drawGraph() {
         let url = "http://localhost:8080/getPoints?leftBorder=";
         url = url + document.getElementById("leftBorder").value + "&rightBorder=";
-        url = url + document.getElementById("rightBorder").value + "&countSplits=";
-        url = url + document.getElementById("countSplits").value;
+        url = url + document.getElementById("rightBorder").value + "&delta=";
+        url = url + document.getElementById("delta").value;
         const expression = document.getElementById("expression").value;
         console.log(url);
         console.log(expression);
@@ -36,6 +36,7 @@
                 const points = response.data;
                 chart = anychart.line();
                 const series = chart.line(points);
+                const series1 = chart.line(points);
                 chart.container("container");
                 chart.draw();
             })

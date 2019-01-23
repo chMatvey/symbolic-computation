@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 
 public class StringTest {
     @Test
-    public void split(){
+    public void split() {
         Pattern pattern = Pattern.compile("[\\w|.]+");
         Matcher matcher = pattern.matcher("0.5");
-        System.out.println((double) Math.round(1.131343532456324d*1000) / 1000);
+        String str = "plot(a+b)";
     }
 }

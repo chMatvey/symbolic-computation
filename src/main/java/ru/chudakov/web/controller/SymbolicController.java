@@ -19,15 +19,31 @@ public class SymbolicController {
     }
 
     @PostMapping("/getPoints")
-    public List<List<Double>> getPoints(@RequestBody String expression,
-                                        @RequestParam Double leftBorder,
-                                        @RequestParam Double rightBorder,
-                                        @RequestParam Double delta) {
-        expression = expression.substring(0, expression.length() - 1);
-        String parts[] = expression.split("&");
-        expression = parts[parts.length - 1];
+    public List<List<List<Double>>> getPoints(@RequestBody String expression) {
+        expression = parse(expression);
+        return symbolicService.getPoints(expression);
+    }
+
+    @PostMapping("/calculate")
+    public String calculate(@RequestBody String expression) {
+        expression = parse(expression);
+        return symbolicService.calculate(expression);
+    }
+
+    private String parse(String expression) {
+        if (expression.indexOf("=") == expression.length() - 1){
+            expression = expression.substring(0, expression.length() - 1);
+        }
+//        String parts[] = expression.split("&");
+//        expression = parts[parts.length - 1];
+        expression = expression.replace("%5B", "[");
+        expression = expression.replace("%5D", "]");
         expression = expression.replace("%2F", "/");
         expression = expression.replace("%5E", "^");
-        return symbolicService.getPoints(expression, leftBorder, rightBorder, delta);
+        expression = expression.replace("%2C", ",");
+        expression = expression.replace("%24", "");
+        expression = expression.replace("%28", "(");
+        expression = expression.replace("%29", ")");
+        return expression;
     }
 }

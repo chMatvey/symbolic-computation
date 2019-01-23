@@ -95,6 +95,7 @@ public class FunctionsTreeExpression {
                 .replace(" ", "")
                 .replace(",-", ",0-")
                 .replace("(-", "(0-")
+                .replace("[-", "[0-")
                 .replace("_", ".");
         if (expression.charAt(0) == '-') {
             expression = "0" + expression;
@@ -137,6 +138,13 @@ public class FunctionsTreeExpression {
             } else if (token.equals("[")) {
                 stackReservePolishNotation.push(token);
             } else if (token.equals("]")) {
+                while (!stackOperation.empty()) {
+                    if (isOperator(stackOperation.lastElement())) {
+                        stackReservePolishNotation.push(stackOperation.pop());
+                    } else {
+                        break;
+                    }
+                }
                 stackReservePolishNotation.push(token);
             } else if (token.contains(";")) {
                 while (!stackOperation.empty()) {
@@ -296,29 +304,20 @@ public class FunctionsTreeExpression {
                     int countSplits = ((NumberSymbol) countSplitsSymbol).getData().intValue();
                     double leftBorder = ((NumberSymbol) leftBorderSymbol).getData();
                     double rightBorder = ((NumberSymbol) rightBorderSymbol).getData();
-                    double delta = (rightBorder - leftBorder) / countSplits;
-                    List<Symbol> listForCreateListSymbol = new ArrayList<>();
-                    TreeMap<VariableSymbol, NumberSymbol> values = new TreeMap<>();
-                    Symbol symbol = getVariable(expressionSymbol);
-                    if (symbol == null || symbol.getClass() != VariableSymbol.class) {
+                    List<Symbol> result = new ArrayList<>();
+                    if (expressionSymbol.getClass() != ListSymbol.class) {
+                        result.add(getPoints(expressionSymbol, leftBorder, rightBorder, countSplits));
+                    } else {
+                        ListSymbol expressionListSymbol = (ListSymbol) expressionSymbol;
+                        for (Symbol symbol : expressionListSymbol.getList()) {
+                            result.add(getPoints(symbol, leftBorder, rightBorder, countSplits));
+                        }
+                    }
+                    arguments.push(new ListSymbol(result));
+                } else if (lastElement.equals("plot")) {
+                    if (arguments.lastElement().getClass() != ListSymbol.class) {
                         return null;
                     }
-                    VariableSymbol variableSymbol = (VariableSymbol) symbol;
-                    values.put(variableSymbol, new NumberSymbol(leftBorder));
-                    List<Symbol> pair;
-                    Symbol valueUserFunction;
-                    for (int i = 0; i < countSplits; i++) {
-                        pair = new ArrayList<>();
-                        valueUserFunction = expressionSymbol.putValue(values);
-                        if (valueUserFunction.getClass() != NumberSymbol.class) {
-                            return null;
-                        }
-                        pair.add(new NumberSymbol(leftBorder));
-                        pair.add(valueUserFunction);
-                        leftBorder += delta;
-                        listForCreateListSymbol.add(new ListSymbol(pair));
-                    }
-                    return new ListSymbol(listForCreateListSymbol);
                 } else {
                     return null;
                 }
@@ -383,6 +382,7 @@ public class FunctionsTreeExpression {
                 while (arguments.lastElement().getClass() != EmptySymbol.class) {
                     list.add(arguments.pop());
                 }
+                Collections.reverse(list);
                 arguments.pop();
                 arguments.push(new ListSymbol(list));
             } else if (lastElement.equals(";")) {
@@ -397,6 +397,35 @@ public class FunctionsTreeExpression {
             listForListSymbol.add(arguments.pop());
             return new ListSymbol(listForListSymbol);
         }
+    }
+
+    private ListSymbol getPoints(Symbol expressionSymbol, double leftBorder, double rightBorder,
+                                 int countSplits) {
+        List<Symbol> listForCreateListSymbol = new ArrayList<>();
+        TreeMap<VariableSymbol, NumberSymbol> values = new TreeMap<>();
+        Symbol symbol = getVariable(expressionSymbol);
+        double delta = (rightBorder - leftBorder) / countSplits;
+        if (symbol == null || symbol.getClass() != VariableSymbol.class) {
+            return null;
+        }
+        VariableSymbol variableSymbol = (VariableSymbol) symbol;
+        values.put(variableSymbol, new NumberSymbol(leftBorder));
+        List<Symbol> pair;
+        Symbol valueUserFunction;
+        for (int i = 0; i <= countSplits; i++) {
+            pair = new ArrayList<>();
+            valueUserFunction = expressionSymbol.putValue(values);
+            if (valueUserFunction.getClass() != NumberSymbol.class) {
+                return null;
+            }
+            pair.add(new NumberSymbol(leftBorder));
+            pair.add(valueUserFunction);
+            leftBorder += delta;
+            listForCreateListSymbol.add(new ListSymbol(pair));
+            values.clear();
+            values.put(variableSymbol, new NumberSymbol(leftBorder));
+        }
+        return new ListSymbol(listForCreateListSymbol);
     }
 
     private VariableSymbol getVariable(Symbol symbol) {

@@ -99,15 +99,17 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         return branches.size();
     }
 
+    protected abstract Symbol getDefaultSymbolToPutValue();
+
     @Override
     public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values) {
         List<Symbol> newBranches = new ArrayList<>();
         for (Symbol branch : branches) {
             newBranches.add(branch.putValue(values));
         }
-        Symbol result = new NumberSymbol(0d);
+        Symbol result = getDefaultSymbolToPutValue();
         for (Symbol branch : newBranches) {
-            result = result.add(branch);
+            result = calculate(result, branch);
         }
         return result;
     }

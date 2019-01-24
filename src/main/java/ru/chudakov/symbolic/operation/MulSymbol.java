@@ -93,4 +93,9 @@ public class MulSymbol extends ArithmeticOperationSymbol {
     protected Symbol getInstance(List<Symbol> branches) {
         return new MulSymbol(branches);
     }
+
+    @Override
+    protected Symbol getDefaultSymbolToPutValue() {
+        return new NumberSymbol(1d);
+    }
 }

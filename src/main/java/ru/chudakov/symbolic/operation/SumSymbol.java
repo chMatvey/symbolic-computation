@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.chudakov.symbolic.Symbol;
+import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.symbolic.visitor.addition.AdditionOperationVisitorForSum;
 import ru.chudakov.symbolic.visitor.OperationVisitor;
 import ru.chudakov.symbolic.visitor.exponentiation.ExponentiationOperationVisitorForSum;
@@ -66,5 +67,10 @@ public class SumSymbol extends ArithmeticOperationSymbol {
     @Override
     protected Symbol getInstance(List<Symbol> branches) {
         return new SumSymbol(branches);
+    }
+
+    @Override
+    protected Symbol getDefaultSymbolToPutValue() {
+        return new NumberSymbol(0d);
     }
 }

@@ -20,7 +20,6 @@ import java.util.TreeSet;
 @Service
 public class SymbolicService {
     private FunctionsTreeExpression functionsTreeExpression;
-    private final static int withBorder = 1;
 
     @PostConstruct
     public void init() {

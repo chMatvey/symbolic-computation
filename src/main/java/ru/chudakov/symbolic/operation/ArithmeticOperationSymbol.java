@@ -46,12 +46,12 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
                 duplicateNode = uniqueCollection.ceiling(node);
                 duplicateNode = calculate(node, duplicateNode);
                 uniqueCollection.remove(node);
-                if (uniqueCollection.contains(duplicateNode)) {
-                    duplicateNode.compareTo(uniqueCollection.first());
-                    uniqueCollection.first();
-                }
+//                if (uniqueCollection.contains(duplicateNode)) {
+//                    duplicateNode.compareTo(uniqueCollection.first());
+//                    uniqueCollection.first();
+//                }
                 uniqueCollection.add(duplicateNode);
-                uniqueCollection.size();
+                //uniqueCollection.size();
             } else {
                 uniqueCollection.add(node);
             }

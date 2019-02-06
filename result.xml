@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sum>
+    <power>
+        <variable>
+            <name>a</name>
+        </variable>
+        <number>
+            <data>2.0</data>
+        </number>
+    </power>
+    <mul>
+        <variable>
+            <name>c</name>
+        </variable>
+        <number>
+            <data>2.0</data>
+        </number>
+    </mul>
+</sum>

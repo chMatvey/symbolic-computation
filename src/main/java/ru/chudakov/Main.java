@@ -2,6 +2,7 @@ package ru.chudakov;
 
 import ru.chudakov.reader.FunctionsTreeExpression;
 import ru.chudakov.symbolic.Symbol;
+import ru.chudakov.symbolic.operand.NumberSymbol;
 import ru.chudakov.writer.SymbolXMLEncoder;
 
 import javax.xml.bind.JAXBException;
@@ -24,8 +25,8 @@ public class Main {
                 continue;
             }
             System.out.println(result.toString());
-            //encoder.encodeSymbolToXML(result);
-            //System.out.println("Выходное выражение записано в файл");
+            encoder.encodeSymbolToXML(result);
+            System.out.println("Выходное выражение записано в файл");
         }
     }
 }

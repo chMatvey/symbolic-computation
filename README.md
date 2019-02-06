@@ -1,20 +1,23 @@
 # symbolic-computation
 
-Пример входных и выходных данных:
+####Пример входных и выходных данных:
 
-1) Вход: a+3
-   Выход:
-  <sum>
+Вход: a+3  
+Выход:
+  ######<e>
+    <sum>
       <variable>
           <name>a</name>
       </variable>
       <number>
           <data>3.0</data>
       </number>
-  </sum>
+    </sum>
+   </e>
 
-2) (a+b)*c
-  <sum>
+(a+b)*c
+  ######<e>
+    <sum>
       <mul>
           <variable>
               <name>a</name>
@@ -31,42 +34,48 @@
               <name>c</name>
           </variable>
       </mul>
-  </sum>
+    </sum>
+   </e>
 
-3) a^2*a
-  <power>
+a^2*a
+  ######<e>
+    <power>
       <variable>
           <name>a</name>
       </variable>
       <number>
           <data>3.0</data>
       </number>
-  </power>
+    </power>
+  </e>
 
-4) f(x,y)=x*y
-   f(3,4) 
-  <number>
-      <data>12.0</data>
-  </number>
+f(x,y)=x*y   
+f(3,4) 
+  ######<e>
+      <number>
+          <data>12.0</data>
+      </number>
+  </e>
+func(f)=a^2+b*2;a=first(f);b=last(f)      
 
-5) func(f)=a^2+b*2;a=first(f);b=last(f)
-   func(a+b+c)
-  <sum>
-      <power>
-          <variable>
-              <name>a</name>
-          </variable>
-          <number>
-              <data>2.0</data>
-          </number>
-      </power>
-      <mul>
-          <variable>
-              <name>c</name>
-          </variable>
-          <number>
-              <data>2.0</data>
-          </number>
-      </mul>
-  </sum>
-  
+func(a+b+c)
+  ######<e>
+      <sum>
+          <power>
+              <variable>
+                  <name>a</name>
+              </variable>
+              <number>
+                  <data>2.0</data>
+              </number>
+          </power>
+          <mul>
+              <variable>
+                  <name>c</name>
+              </variable>
+              <number>
+                  <data>2.0</data>
+              </number>
+          </mul>
+      </sum>
+  </e>

@@ -4,7 +4,7 @@
 
 Вход: a+3  
 Выход:
-  ######<e>
+
     <sum>
       <variable>
           <name>a</name>
@@ -13,10 +13,9 @@
           <data>3.0</data>
       </number>
     </sum>
-   </e>
 
 (a+b)*c
-  ######<e>
+
     <sum>
       <mul>
           <variable>
@@ -35,10 +34,9 @@
           </variable>
       </mul>
     </sum>
-   </e>
 
 a^2*a
-  ######<e>
+
     <power>
       <variable>
           <name>a</name>
@@ -47,19 +45,17 @@ a^2*a
           <data>3.0</data>
       </number>
     </power>
-  </e>
 
 f(x,y)=x*y   
 f(3,4) 
-  ######<e>
+
       <number>
           <data>12.0</data>
       </number>
-  </e>
+      
 func(f)=a^2+b*2;a=first(f);b=last(f)      
-
 func(a+b+c)
-  ######<e>
+
       <sum>
           <power>
               <variable>
@@ -78,4 +74,3 @@ func(a+b+c)
               </number>
           </mul>
       </sum>
-  </e>

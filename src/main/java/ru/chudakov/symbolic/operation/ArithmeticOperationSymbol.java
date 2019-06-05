@@ -17,11 +17,11 @@ import java.util.*;
 public abstract class ArithmeticOperationSymbol extends OperationSymbol {
     protected TreeSet<Symbol> branches;
 
-    public ArithmeticOperationSymbol(Collection<Symbol> nodes) {
+    ArithmeticOperationSymbol(Collection<Symbol> nodes) {
         branches = mergeDuplicates(nodes);
     }
 
-    public ArithmeticOperationSymbol(@NotNull Symbol firstArgument, Symbol secondArgument) {
+    ArithmeticOperationSymbol(@NotNull Symbol firstArgument, Symbol secondArgument) {
         firstArgument = checkCache(firstArgument);
         secondArgument = checkCache(secondArgument);
         branches = new TreeSet<>();
@@ -37,7 +37,7 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
 
     protected abstract String getOperation();
 
-    protected TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes) {
+    private TreeSet<Symbol> mergeDuplicates(@NotNull Collection<Symbol> nodes) {
         TreeSet<Symbol> uniqueCollection = new TreeSet<>();
         Symbol duplicateNode;
         for (Symbol node : nodes) {
@@ -46,12 +46,7 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
                 duplicateNode = uniqueCollection.ceiling(node);
                 duplicateNode = calculate(node, duplicateNode);
                 uniqueCollection.remove(node);
-//                if (uniqueCollection.contains(duplicateNode)) {
-//                    duplicateNode.compareTo(uniqueCollection.first());
-//                    uniqueCollection.first();
-//                }
                 uniqueCollection.add(duplicateNode);
-                //uniqueCollection.size();
             } else {
                 uniqueCollection.add(node);
             }
@@ -91,11 +86,6 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
 
     @Override
     public int length() {
-//        int result = 0;
-//        for (Symbol symbol : branches) {
-//            result += symbol.length();
-//        }
-//        return result;
         return branches.size();
     }
 
@@ -139,33 +129,6 @@ public abstract class ArithmeticOperationSymbol extends OperationSymbol {
         }
         return result;
     }
-
-//    @Override
-//    public boolean equals(Object obj) {
-//        boolean result = super.equals(obj);
-//        if (result) {
-//            ArithmeticOperationSymbol symbol = (ArithmeticOperationSymbol) obj;
-//            Iterator<Symbol> firstIterator = this.branches.iterator();
-//            Iterator<Symbol> secondIterator = symbol.branches.iterator();
-//            while (firstIterator.hasNext() && secondIterator.hasNext()) {
-//                result = firstIterator.next().equals(secondIterator.next());
-//                if (!result) {
-//                    return false;
-//                }
-//            }
-//            while (firstIterator.hasNext()) {
-//                if (firstIterator.next().getPriority() != 0) {
-//                    return false;
-//                }
-//            }
-//            while (secondIterator.hasNext()) {
-//                if (secondIterator.next().getPriority() != 0) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return result;
-//    }
 
     @Override
     public String toString() {

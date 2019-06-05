@@ -21,7 +21,7 @@ public class SymbolXMLEncoderTest {
     @Test
     public void encodeSymbolToXML() throws JAXBException {
         Symbol symbol = new MulSymbol(new VariableSymbol("a"), new VariableSymbol("b"));
-        SymbolXMLEncoder encoder = new SymbolXMLEncoder();
+        SymbolXMLEncoder encoder = new SymbolXMLEncoder("result.xml");
         encoder.encodeSymbolToXML(symbol);
     }
 }

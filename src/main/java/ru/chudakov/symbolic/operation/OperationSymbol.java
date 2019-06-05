@@ -13,13 +13,9 @@ import java.util.List;
 import java.util.TreeMap;
 
 @NoArgsConstructor
-public abstract class OperationSymbol extends AbstractSymbol {
-    protected Symbol checkCache(Symbol argument) {
+abstract class OperationSymbol extends AbstractSymbol {
+    Symbol checkCache(Symbol argument) {
         CacheSymbolSingleton cache = CacheSymbolSingleton.getInstance();
-        if (cache.getVariablesAndFunction().containsKey(argument)) {
-            return cache.getVariablesAndFunction().get(argument);
-        } else {
-            return argument;
-        }
+        return cache.getVariablesAndFunction().getOrDefault(argument, argument);
     }
 }

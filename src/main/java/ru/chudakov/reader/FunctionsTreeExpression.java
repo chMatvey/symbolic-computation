@@ -2,7 +2,6 @@ package ru.chudakov.reader;
 
 import javafx.util.Pair;
 import org.apache.commons.lang.math.NumberUtils;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.chudakov.symbolic.Symbol;
 import ru.chudakov.symbolic.cache.CacheSymbolSingleton;

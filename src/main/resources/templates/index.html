@@ -19,9 +19,11 @@
     function calculate() {
         const url = "http://localhost:8080/calculate";
         let expression = document.getElementById("expression").value;
+
         while (expression.includes(" ")) {
             expression = expression.replace(" ", "$");
         }
+
         axios.post(url, expression, "Content-type': 'application/json; charset=utf-8")
             .then(response => {
                 alert(response.data);
@@ -30,12 +32,15 @@
                 alert(error);
             });
     }
+
     function drawGraph() {
         const url = "http://localhost:8080/getPoints";
         let expression = document.getElementById("expression").value;
+
         while (expression.includes(" ")) {
             expression = expression.replace(" ", "$");
         }
+
         axios.post(url, expression, "Content-type': 'application/json; charset=utf-8")
             .then(response => {
                 document.getElementById("container");

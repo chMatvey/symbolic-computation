@@ -13,14 +13,10 @@ import java.io.*;
 
 public class SymbolXMLEncoder {
 
-    public void encodeSymbolToXML(Symbol symbol) throws JAXBException {
-        String path = new File("").getAbsolutePath();
-        String fileName = "result.xml";
-        File file = new File(path, fileName);
-        encodeSymbolToXML(file, symbol);
-    }
+    private Marshaller marshaller;
+    private File file;
 
-    public void encodeSymbolToXML(File file, Symbol symbol) throws JAXBException {
+    public SymbolXMLEncoder(String fileName) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(
                 NumberSymbol.class,
                 FractionSymbol.class,
@@ -30,8 +26,14 @@ public class SymbolXMLEncoder {
                 PowerSymbol.class,
                 FunctionSymbol.class
         );
-        Marshaller marshaller = context.createMarshaller();
-        //marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+        marshaller = context.createMarshaller();
+
+        String path = new File("").getAbsolutePath();
+        file = new File(path, fileName);
+    }
+
+    public void encodeSymbolToXML(Symbol symbol) throws JAXBException {
         marshaller.marshal(symbol, file);
     }
 }

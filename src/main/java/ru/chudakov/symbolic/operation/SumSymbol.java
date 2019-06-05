@@ -29,7 +29,6 @@ public class SumSymbol extends ArithmeticOperationSymbol {
     }
 
     @XmlAnyElement
-    //@XmlElementWrapper(name = "arguments")
     public TreeSet<Symbol> getBranches(){
         return branches;
     }

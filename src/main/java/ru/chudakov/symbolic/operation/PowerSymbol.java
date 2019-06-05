@@ -77,18 +77,6 @@ public class PowerSymbol extends OperationSymbol {
         return result;
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        boolean result = super.equals(obj);
-//        if (result) {
-//            PowerSymbol symbol = (PowerSymbol) obj;
-//            result = this.base.equals(symbol.base);
-//        } else {
-//            result = this.base.equals(obj);
-//        }
-//        return result;
-//    }
-
     @Override
     public String toString() {
         return "(" + base.toString() + "^" + index.toString() + ")";

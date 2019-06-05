@@ -1,12 +1,11 @@
 package ru.chudakov.web.controller;
 
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import ru.chudakov.web.service.SymbolicService;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @RestController
@@ -34,8 +33,7 @@ public class SymbolicController {
         if (expression.indexOf("=") == expression.length() - 1){
             expression = expression.substring(0, expression.length() - 1);
         }
-//        String parts[] = expression.split("&");
-//        expression = parts[parts.length - 1];
+
         expression = expression.replace("%5B", "[");
         expression = expression.replace("%5D", "]");
         expression = expression.replace("%2F", "/");

@@ -7,21 +7,21 @@ import ru.chudakov.symbolic.visitor.OperationVisitor;
 import java.util.TreeMap;
 
 public interface Symbol extends Comparable<Symbol> {
-    public int getPriority();
+    int getPriority();
 
-    public Symbol add(Symbol secondArgument);
+    Symbol add(Symbol secondArgument);
 
-    public Symbol mul(Symbol secondArgument);
+    Symbol mul(Symbol secondArgument);
 
-    public Symbol pow(Symbol secondArgument);
+    Symbol pow(Symbol secondArgument);
 
-    public Symbol callVisitor(OperationVisitor visitor);
+    Symbol callVisitor(OperationVisitor visitor);
 
-    public Symbol getFirst();
+    Symbol getFirst();
 
-    public Symbol getLast();
+    Symbol getLast();
 
-    public int length();
+    int length();
 
-    public Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values);
+    Symbol putValue(TreeMap<VariableSymbol, NumberSymbol> values);
 }

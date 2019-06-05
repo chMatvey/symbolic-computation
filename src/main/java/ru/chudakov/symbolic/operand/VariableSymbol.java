@@ -37,16 +37,6 @@ public class VariableSymbol extends OperandSymbol {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        boolean result = super.equals(obj);
-        if (result) {
-            VariableSymbol symbol = (VariableSymbol) obj;
-            result = this.name.equals(symbol.name);
-        }
-        return result;
-    }
-
-    @Override
     public Symbol add(Symbol secondArgument) {
         return secondArgument.callVisitor(new AdditionOperationVisitorForVariable(this));
     }

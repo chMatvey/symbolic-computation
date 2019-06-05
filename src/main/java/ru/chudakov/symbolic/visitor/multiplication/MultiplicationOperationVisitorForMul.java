@@ -45,8 +45,8 @@ public class MultiplicationOperationVisitorForMul implements OperationVisitor {
     public Symbol calculateSum(SumSymbol secondArgument) {
         Symbol[] array = secondArgument.toArray();
         List<Symbol> list = new ArrayList<>();
-        for (int i = 0; i < array.length; i++) {
-            list.add(firstArgument.mul(array[i]));
+        for (Symbol symbol : array) {
+            list.add(firstArgument.mul(symbol));
         }
         return new SumSymbol(list);
     }
@@ -62,11 +62,11 @@ public class MultiplicationOperationVisitorForMul implements OperationVisitor {
     public Symbol calculatePower(PowerSymbol secondArgument) {
         Symbol[] array = firstArgument.toArray();
         List<Symbol> list = new ArrayList<>();
-        for (int i = 0; i < array.length; i++) {
-            if (secondArgument.getBase().compareTo(array[i]) == 0) {
-                list.add(array[i].mul(secondArgument));
+        for (Symbol symbol : array) {
+            if (secondArgument.getBase().compareTo(symbol) == 0) {
+                list.add(symbol.mul(secondArgument));
             } else {
-                list.add(array[i]);
+                list.add(symbol);
             }
         }
         return new MulSymbol(list);

@@ -41,8 +41,8 @@ public class MultiplicationOperationVisitorForNumber implements OperationVisitor
     public Symbol calculateSum(SumSymbol secondArgument) {
         Symbol[] array = secondArgument.toArray();
         List<Symbol> list = new ArrayList<>();
-        for (int i = 0; i < array.length; i++) {
-            list.add(firstArgument.mul(array[i]));
+        for (Symbol symbol : array) {
+            list.add(firstArgument.mul(symbol));
         }
         return new SumSymbol(list);
     }

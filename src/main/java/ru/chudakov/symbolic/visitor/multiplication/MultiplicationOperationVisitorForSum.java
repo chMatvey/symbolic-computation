@@ -53,9 +53,9 @@ public class MultiplicationOperationVisitorForSum implements OperationVisitor {
         Symbol[] firstArray = firstArgument.toArray();
         Symbol[] secondArray = secondArgument.toArray();
         List<Symbol> list = new ArrayList<>();
-        for (int i = 0; i < firstArray.length; i++) {
-            for (int j = 0; j < secondArray.length; j++) {
-                list.add(firstArray[i].mul(secondArray[j]));
+        for (Symbol symbol : firstArray) {
+            for (Symbol value : secondArray) {
+                list.add(symbol.mul(value));
             }
         }
         return new SumSymbol(list);

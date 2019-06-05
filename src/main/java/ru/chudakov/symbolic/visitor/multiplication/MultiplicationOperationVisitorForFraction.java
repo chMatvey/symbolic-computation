@@ -45,8 +45,8 @@ public class MultiplicationOperationVisitorForFraction implements OperationVisit
     public Symbol calculateSum(SumSymbol secondArgument) {
         Symbol[] array = secondArgument.toArray();
         List<Symbol> list = new ArrayList<>();
-        for (int i = 0; i < array.length; i++) {
-            list.add(new MulSymbol(firstArgument, array[i]));
+        for (Symbol symbol : array) {
+            list.add(new MulSymbol(firstArgument, symbol));
         }
         return new SumSymbol(list);
     }

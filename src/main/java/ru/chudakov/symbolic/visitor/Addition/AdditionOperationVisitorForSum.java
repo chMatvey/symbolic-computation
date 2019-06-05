@@ -44,9 +44,7 @@ public class AdditionOperationVisitorForSum implements OperationVisitor {
     @Override
     public Symbol calculateSum(SumSymbol secondArgument) {
         List<Symbol> list = new ArrayList<>(firstArgument.getBranches());
-        for (Symbol symbol : secondArgument.getBranches()) {
-            list.add(symbol);
-        }
+        list.addAll(secondArgument.getBranches());
         return new SumSymbol(list);
     }
 
